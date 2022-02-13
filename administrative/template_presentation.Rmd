@@ -1,0 +1,33 @@
+---
+title: "Team Title"
+subtitle: "2022 Datathon for ElderNet"
+author: "Team 1: Gritty McGritty, etc."
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Problem definition and dataset
+
+
+
+## Working definitions
+
+
+
+## Data issues
+
+- Missing data: we found XXXX number of missing values, so results should be interpreted with caution.
+
+## Results 
+
+```{r, echo = FALSE}
+plot(iris$Sepal.Length, iris$Sepal.Width)
+```
+
+## Conclusions 
+
+## Limitations and Next Steps
