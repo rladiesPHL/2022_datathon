@@ -1,0 +1,209 @@
+---
+title: "Eldernet Data Dictionary"
+author: "2022 Datathon Leads"
+date: "Feb-2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Data
+
+## care_management_anonymized.csv
+
+This dataset is a detailed, historical account of ElderNet's interactions with its clients, third parties, and itself. Dates covered January 2019 thru September 2021. Content is a cleaned and deidentified dataset of individual interactions between ElderNet, their clients, and other parties (such as family, service providers, care managers, etc.). Each record is a unique call, email chain, or some other form of communication with a party. Detailed categories were assigned for the most recent data April 2020 thru Sept 2021.
+
+_Dataset Notes_: One person may be assisted multiple times, for different topics, within this dataset. In most interactions, there were three or fewer unique benefits to list; in cases where there were four or more benefits, only the biggest issues at hand were listed. Sometimes interactions were about general assistance from Eldernet, or Eldernet called to check in on a client -- in these topics, `ElderNet` was listed as the benefit type.
+
+| Variable | Description | Var Type | Example
+| -------- | ----------- | -------- | -------- |
+| [anon_ID](#anon_id) | Unique and anonymized identifier for client | character | 531
+| Assistance Date | Date and time of assistance YYYY-MM-DD hh:mm:ss | datetime | 2019-01-04 10:35:00
+| Assistance Category | Type of assistance (6 types) | character | "Social Work: Community", "Social Work: ElderNet Office", "Social Work: Home Visit", "Social Work: Internal Discussions", "Social Work: Remote Contact w/o client", or "Social Work: Remote Contact with client (phone, email)"
+| Amount | Numeric value of assistance granted (corresponds with "Unit" field) | numeric | 25
+| Unit | Unit of assistance provided (corresponds with "Amount" field) | character | "Dollars" or "Minutes" or "Pounds"
+| [CommType](#commtype) | Communication Type | character | Call
+| [Party](#party) | Type of person in communication | character | Client
+| [InitiatedBy](#initiatedby) | Indicates who initiated communication first | character | ElderNet
+| [Benefit_1](#benefit) | Benefit type | character | Housing
+| [Assistance_1](#assistance) | Assistance type | character | Coordination
+| Benefit_2 | Additional benefit type | character | Financial
+| Assistance_2 | Additional assistance type | character | Enrollment
+| Benefit_3 | Additional benefit type | character | Social
+| Assistance_3 | Additional assistance type | character | Continuation
+
+
+## client_info_anonymized.csv
+
+This dataset is an anonymized lookup table of ElderNet's clients. The primary key is `anon_id` which can be used to merge with the Care Management, Pantry, and Volunteer Services files. In order to protect the privacy of the group's clients, a randomized number was assigned to clients. Additionally, identifying information such as names, addresses, and demographic details, was removed and/or generalized.
+
+| Variable | Description | Var Type | Example
+| -------- | ----------- | -------- | -------- |
+| [anon_ID](#anon_id) | Unique and anonymized identifier for client | character | 531
+| county | Indicates if client resides in Montgomery County PA or other | character | Montgomery
+| poverty | Indicates if the client is impoverished | character | Yes
+| minority | Indicates if the client is identified as a minority group | character | No
+| age_group | Blinded variable identifying which age group the client is part of | character | T
+
+
+## donations_anonymized.csv
+This dataset contains details about donations to Eldernet. Includes individuals and organizations. This has been cleaned and deidentified.
+
+| Variable | Description | Var Type | Example
+| ---------| ----------- | -------- | ------- |
+| [anon_donor_id](#anon_donor_id) | Unique and anonymized identifier for donor | numeric | 92
+| zip | 5-digit zipcode | character | 19072
+| status | status | character | "Active" or empty
+| do_not_mail | donor does not want to be contacted by mail | boolean | 0 or 1
+| do_not_call | donor does not want to be contacted by phone | boolean | 0 or 1
+| organisation | Flag indicating if donor is an organization or not | boolean | FALSE
+| date | Date of donation | date MM/DD/YYYY
+| amount | Amount donated in dollars | numeric | 150
+| form | Type of donation | character | "Cash" or "Check" or "InKind"
+| [campaign](#campaign) | Indicates if donation associated with a campaign type | character | "Clients" or "United Way"
+| target | target | character | Gift
+
+
+## pantry_anonymized.csv
+This dataset contains details about each record where a person (identified by `anon_ID`) was assisted by Eldernet between January 2019 and September 2021. This specifically outlines the use of the ElderNet food pantry. This is cleaned and deidentified.
+
+Note: One person may be assisted multiple times, for different pantry items, within this dataset.
+
+| Variable | Description | Var Type | Example
+| ---------| ----------- | -------- | ------- |
+| [anon_ID](#anon_id) | Unique and anonymized identifier for client | character | 531
+| assistance_date | Date and time of assistance MM/DD/YYYY hh:mm | datetime | 1/4/2019 10:35
+| assistance_category | Type of assistance (3 types) | character |  "Food Pantry: Easter Outreach" or "Food Pantry: Food Pantry Poundage" or "Food Pantry: Holiday Baskets"
+| amount | Numeric value of assistance granted (corresponds with "Unit" field) | numeric | 25
+| unit | Unit of assistance provided (corresponds with "Amount" field) | character | "Boxes/Bags" or "Dollars" or "Pounds"
+
+
+## volunteer_services_anonymized.csv
+This dataset contains details about each records where a client (identified by `anon_ID`) was assisted by Eldernet between January 2019 and September 2021. This specifically outlines the use of the ElderNet ride services. This was cleaned and deidentified.
+
+*Note:* One person may be assisted multiple times, for different topics, within this dataset. Includes historical information about first ride date.
+
+| Variable | Description | Var Type | Example
+| ---------| ----------- | -------- | ------- |
+| [anon_ID](#anon_id) | Unique and anonymized identifier for client | character | 531
+| rider_last_ride_date | Date of latest ride received prior to this ride appt MM/DD/YYYY | date | 01/25/2021
+| rider_first_ride_date | Date of first ride received MM/DD/YYYY | date | 05/26/2015
+| rider_num_rides | rider_num_rides | numeric | 0
+| appt_date | Date of ride MM/DD/YYYY | date | 09/20/2021
+| appt_duration | Number of hours during ride rounded to nearest 15 minute duration | numeric float | 2.50
+| [Category](#category) | Reason for ride | character | Doctor Appt
+
+
+# Terminology
+
+### anon_ID
+Unique, anonymized numeric identifier for ElderNet participants. 
+Example: **531**
+
+### anon_donor_id
+Unique, anonymized numeric identifier for donors
+Example: **92**
+
+### Assistance
+Assistance type in Care Management dataset
+
+- **Coordination:** following up with client or service provider, connecting with other parties to facilitate something for the client
+- **Continuation:** helping client maintain their existing benefits
+- **Enrollment:** helping with the enrollment process
+- **Filing:** submitting forms (when enrollment/continuation of benefits unclear)
+- **Information:** providing information, explaining documents
+- **Referral:** referral to a provider, informing client of specific providers for their problem
+- **Support:** to do with in person visits, social visits, doing things for the participant, bringing things to the participant, buying things for the participant
+
+### Benefit
+Benefit type in Care Management dataset
+
+- **ADL:**  activities of daily living (bathing, dressing, moving around in the house, going to the bathroom, etc); e.g. Home health Aides
+- **ElderNet:** to do with being an ElderNet participant; overall support/services provided by ElderNet
+- **Financial:** pension, SSDI, SS, retirement, debt, taxes, etc
+- **Food:** ability to access and obtain food
+- **Housing:** living situation (rent, mortgage, moving into assisted living, or nursing home); to do with a person’s living environment, including repairs, cleaning up, etc
+- **Legal:** power of attorney, advance directives, ID & identity theft; voting
+- **Medical:** physical and mental health care, including health insurance, and rehab; includes Waiver program
+- **Pets:** Pet care, pet food
+- **Safety:** emergency preparedness, firearm removal, hoarding, etc
+- **Social:** social visit, questions about social activity, etc
+- **Telecommunication:** access and use of phone service, internet, TV; things to do with technology
+- **Transportation:** access to public transit, medical and nonmedical transportation, etc
+- **Utilities:** electric, gas, water
+
+### Campaign
+Donation campaigns in Donor dataset. Values were truncated in raw data.
+
+- AMCRC
+- Board
+- CAC
+- Church
+- Clients
+- Corporatio
+- D.Young Fu
+- Emerg fund
+- Escort Dri
+- Fall Towns
+- Foundation
+- Grants
+- In-Kind
+- Mem-hon
+- Misc
+- Newsletter
+- Special Pr
+- Sprg Evt
+- United Way
+
+### Category
+Reason for ride request in Volunteer Services dataset
+
+- Board or Committee Mtg
+- Doctor Appt
+- Errands
+- Friendly Visit
+- Odd Jobs
+- Pantry
+- Pantry Delivery
+- Shopping
+- Skilled Work
+- Special Projects
+- Telephone Reassurance
+- Yard Work
+
+### Client
+Term used to describe ElderNet participant
+
+### CommType
+Communication type in Care Management dataset
+
+- Call
+- Email
+- In Person
+- Mail 
+- Text Message **(includes Facebook message)**
+- Video Call **(includes FaceTime and Zoom)**
+- Voice Message
+
+### InitiatedBy
+Communication initiated by whom in Care Management dataset
+
+- ElderNet
+- Other Party
+
+### Party
+Party type in Care Management dataset
+
+- Care Manager 
+- Client
+- ElderNet
+- Family
+- Friend
+- Other
+- Service Provider
+- Social Worker
+
+### Participant
+Term used to describe ElderNet client
+
