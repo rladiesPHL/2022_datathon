@@ -70,11 +70,11 @@ Datathon organizers are dedicated to providing a harassment-free experience for 
 
 ## FAQ
 
-**What if I have questions about the data or about ElderNet?**
+### What if I have questions about the data or about ElderNet?
 
 - ElderNet representatives will answer questions via a [google sheet](https://docs.google.com/document/d/17vAQniQK6KEQsS2pSP564QzXHEA6kIgHz6mgf5fXHqs/edit?usp=sharing). Please write your questions in the shared google doc, and ElderNet representatives, or datathon organizers, will answer them regularly; you can also post your questions in slack and organizers will do their best to answer them, or other datathon participants may be able to help!
 
-**I am new to R. How do I get started?**
+### I am new to R. How do I get started?
 
 1. [Install R and R Studio](https://rstudio-education.github.io/hopr/starting.html)
 2. Watch the ["Intro to R" webinar by Tess Cherlin](https://youtu.be/80VIvZZegY8?t=1297) on R-Ladies Philly YouTube Channel
@@ -82,17 +82,17 @@ Datathon organizers are dedicated to providing a harassment-free experience for 
 4. Refer to [Rstudio Cheatsheets](https://rstudio.com/resources/cheatsheets/) for quick solutions to coding questions
 5. Ask for help on the [RLadies-Philly Slack](https://bit.ly/join-rladies-slack-2020) #help channel
 
-**I've never used Git and GitHub before. What is it and how do I use it?**
+### I've never used Git and GitHub before. What is it and how do I use it?
 
 - Use this guide to [get started with Git and GitHub](https://happygitwithr.com/index.html)
 - Use [this step-by-step guide](https://docs.google.com/document/d/1vF7uWo2ITXcifyNoLd8ZTJdNPx0Pd4eXXrdkKVfbAkY/edit) from the 2021 datathon to start participating in the collaborative work for this datathon 
 - Ask for help on the [RLadies-Philly Slack](https://bit.ly/join-rladies-slack-2020) #help channel
 
-**I have a question and I can't find the answer in these resources. Where do I go for help?**
+### I have a question and I can't find the answer in these resources. Where do I go for help?
 
 - Ask for help on the [RLadies-Philly Slack](https://bit.ly/join-rladies-slack-2020) #help channel or in the datathon slack channel #datathon2022
 
-**I missed the kickoff event. Can I still participate?**
+### I missed the kickoff event. Can I still participate?
 
 If you weren't able to attend our Kick-off Meetup, here's how to get involved:
 
@@ -107,7 +107,7 @@ If you weren't able to attend our Kick-off Meetup, here's how to get involved:
 
 If you have any questions don't hesitate to get in touch. Send a message in the **#datathon2022* slack channel.
 
-**How do I contact a team?**
+### How do I contact a team?
 
 - Participants will add their names, RLadies Philly Slack IDs and GitHub IDs to [this list](https://docs.google.com/document/d/17n4l_eEuVHglAAJQv4S1kJxZgyyeZCx4IVMIPFF9aJA/edit?usp=sharing) (new rows can be added), according to the team they are in. Once you join the RLadies Philly slack channel, you can reach out to any of these members directly, or join the #datathon2022 channel and address all participants.  
 
