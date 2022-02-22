@@ -156,6 +156,39 @@ care_management_clean <- care_management %>%
 write_csv(care_management_clean, "analyses/team1/care_management_anonymized_cleaned.v1.csv")
 
 ##### CLEANING CLIENT INFO #####
+# Not necessary, organizers already removed the duplicates
+
+##### CLEANING VOLUNTEER SERVICES #####
+
+glimpse(volunteer_services)
+
+sum(is.na(volunteer_services$rider_first_ride_date))
+sum(is.na(volunteer_services$rider_last_ride_date))
+summary(volunteer_services$rider_num_rides)
+
+# Every client has a first and last ride date recorded
+# However the rider_num_rides variable is set to 0 for everyone, this variable is useless
+
+unique(volunteer_services$category)
+# This matches the data dictionary
+
+##### CLEANING PANTRY #####
+
+glimpse(pantry)
+unique(pantry$assistance_category)
+# This matches the data dictionary
+
+unique(pantry$unit)
+# This matches the data dictionary
+
+sum(is.na(pantry$assistance_date))
+sum(is.na(pantry$assistance_category))
+sum(is.na(pantry$amount))
+sum(is.na(pantry$unit))
+# This looks good
+
+##### CLEANING DONATIONS #####
+# Not started
 
 
 ##### QUESTIONS #####
