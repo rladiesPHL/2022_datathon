@@ -1,6 +1,7 @@
 ---
 title: 'Exploring ElderNet Datasets'
 output: github_document
+always_allow_html: true
 editor_options: 
   chunk_output_type: console
 ---
