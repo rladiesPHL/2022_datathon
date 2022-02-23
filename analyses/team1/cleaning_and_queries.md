@@ -1,17 +1,6 @@
 ---
-title: 'Datathon 2022 Team 1: Initial Cleaning and Queries'
-author: "Kathrine McAulay"
-date: "2/23/2022"
-output: 
-  html_document:
-    keep_md: true
-
----
-
-```{r setup, include = FALSE}
-library(kableExtra)
-source("analyses/team1/kathrine_initial_review.R")
-```
+## Datathon 2022 Team 1: Initial Cleaning and Queries
+#### date: "2/23/2022"
 
 ## Care Management
 
