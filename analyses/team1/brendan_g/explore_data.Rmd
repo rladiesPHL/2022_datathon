@@ -236,7 +236,7 @@ care_mgmt %>%
 ### Pantry
 
 ```{r}
-pantry %>% add_table()
+# pantry %>% add_table()
 ```
 
 There is some repeating cycles present, likely due to holiday baskes (see next chart).
@@ -279,7 +279,7 @@ pantry %>%
 ### Volunteers
 
 ```{r}
-volunteer %>% add_table()
+# volunteer %>% add_table()
 ```
 
 ```{r}
