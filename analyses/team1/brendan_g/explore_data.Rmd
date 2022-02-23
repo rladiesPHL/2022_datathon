@@ -111,8 +111,8 @@ main takeaways:
  * There is lots of missing demographic data for poverty status, minority status and age group
 
 ```{r}
-client_info %>% 
-  add_table()
+# client_info %>% 
+#   add_table()
 ```
 
 ```{r}
@@ -123,8 +123,8 @@ duplicated <-
   tally(sort = TRUE) %>%
   filter(n > 1) 
 
-duplicated %>% 
-  add_table()
+# duplicated %>% 
+#   add_table()
 
 ```
 
@@ -147,17 +147,17 @@ client_info %>%
 ### Care Management
 
 ```{r}
-care_mgmt %>% add_table()
+# care_mgmt %>% add_table()
 ```
 
 Care management encounters per client is right-skewed. The max is 371 encounters, min is 1 and the median number of care management encounters per client is 6.
 
 ```{r}
 
-care_mgmt %>%
-  group_by(anon_ID) %>%
-  tally(sort = TRUE)  %>%
-  add_table()
+# care_mgmt %>%
+#   group_by(anon_ID) %>%
+#   tally(sort = TRUE)  %>%
+#   add_table()
 ```
 
 ```{r}
