@@ -15,6 +15,15 @@ volunteer_services <- read_csv("data/volunteer_services_anonymized.csv")
 pantry <- read_csv("data/pantry_anonymized.csv")
 donations <- read_csv("data/donations_anonymized.csv")
 
+
+##### CLEANING CARE MANAGEMENT #####
+glimpse(care_management)
+
+##### CLEANING CARE MANAGEMENT: assistance_category #####
+unique(care_management$assistance_category)
+table(care_management$assistance_category, useNA = "always")
+# Nothing to fix here
+
 ##### CLEANING CARE MANAGEMENT: Assistance_ #####
 # Let's spend some time cleaning this data:
 
@@ -107,7 +116,7 @@ initiation_na <- care_management %>%
         filter(is.na(InitiatedBy))
 table(initiation_na$Party, useNA = "always")
 # Yes, only in a few cases and none are ElderNet, so pull this in as "Other Party"
-# BUT need to clean Party variable first, so address that before addressing InitiatedBy
+
 
 ##### CLEANING CARE MANAGEMENT: Party #####
 # from the data dictionary:
@@ -167,6 +176,15 @@ sum(is.na(volunteer_services$rider_last_ride_date))
 summary(volunteer_services$rider_num_rides)
 
 # Every client has a first and last ride date recorded
+# How many clients are represented here?
+
+volunteer_services %>% 
+        select(anon_ID) %>% 
+        unique() %>% 
+        nrow()
+
+# Only 162
+
 # However the rider_num_rides variable is set to 0 for everyone, this variable is useless
 
 unique(volunteer_services$category)
@@ -187,9 +205,105 @@ sum(is.na(pantry$amount))
 sum(is.na(pantry$unit))
 # This looks good
 
-##### CLEANING DONATIONS #####
-# Not started
 
+##### CLEANING DONATIONS #####
+glimpse(donations)
+
+##### CLEANING DONATIONS: Zip #####
+
+unique(donations$zip)
+table(donations$zip, useNA = "always")
+# Looks good, a bunch of NA (135)
+
+##### CLEANING DONATIONS: Status #####
+
+unique(donations$status)
+table(donations$status, useNA = "always")
+# Looks good
+
+##### CLEANING DONATIONS: do_not_mail #####
+
+unique(donations$do_not_mail)
+table(donations$do_not_mail, useNA = "always")
+# Looks good
+
+##### CLEANING DONATIONS: do_not_call #####
+
+unique(donations$do_not_call)
+table(donations$do_not_call, useNA = "always")
+# Looks good
+
+##### CLEANING DONATIONS: Organization #####
+
+unique(donations$organisation)
+table(donations$organisation, useNA = "always")
+# Looks good
+
+##### CLEANING DONATIONS: date #####
+
+unique(donations$date)
+table(donations$date, useNA = "always")
+# Looks good
+
+##### CLEANING DONATIONS: amount #####
+
+unique(donations$amount)
+table(donations$amount, useNA = "always")
+# Looks good
+
+##### CLEANING DONATIONS: form #####
+
+unique(donations$form)
+table(donations$form, useNA = "always")
+# Looks good
+
+##### CLEANING DONATIONS: Campaign #####
+
+# From the data dictionary:
+# AMCRC
+# Board
+# CAC
+# Church
+# Clients
+# Corporatio
+# D.Young Fu
+# Emerg fund
+# Escort Dri
+# Fall Towns
+# Foundation
+# Grants
+# In-Kind
+# Mem-hon
+# Misc
+# Newsletter
+# Special Pr
+# Sprg Evt
+# United Way
+
+# What do we see:
+unique(donations$campaign)
+table(donations$campaign, useNA = "always")
+# Looks good, reflects the data dictionary
+
+##### CLEANING DONATIONS: target #####
+
+unique(donations$target)
+table(donations$target, useNA = "always")
+# Looks good, everything is set to "Gift"
+
+
+##### Dummy DF #####
+# To give an example of what I would like to achieve by merging the assistance and benefit variables:
+
+anon_ID <- c(1,1,1,2,2,2)
+instance <- c(1,2,3)
+assistance <- c("Continuation", "Support", "Referral")
+benefit <- c("Telecommunication", "Financial", "Transportation")
+
+df <- data.frame(anon_ID, instance, assistance, benefit,
+                 row.names = NULL)
+
+print(df)
 
 ##### QUESTIONS #####
 
