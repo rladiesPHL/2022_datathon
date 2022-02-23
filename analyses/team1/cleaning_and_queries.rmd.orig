@@ -2,8 +2,7 @@
 title: 'Datathon 2022 Team 1: Initial Cleaning and Queries'
 author: "Kathrine McAulay"
 date: "2/23/2022"
-output: rmarkdown::github_document
-
+output: html_document
 ---
 
 ```{r setup, include = FALSE}
