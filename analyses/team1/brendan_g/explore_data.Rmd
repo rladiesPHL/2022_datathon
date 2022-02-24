@@ -123,8 +123,8 @@ duplicated <-
   tally(sort = TRUE) %>%
   filter(n > 1) 
 
-# duplicated %>% 
-#   add_table()
+duplicated %>%
+  add_table()
 
 ```
 
@@ -147,7 +147,7 @@ client_info %>%
 ### Care Management
 
 ```{r}
-# care_mgmt %>% add_table()
+care_mgmt %>% add_table()
 ```
 
 Care management encounters per client is right-skewed. The max is 371 encounters, min is 1 and the median number of care management encounters per client is 6.
