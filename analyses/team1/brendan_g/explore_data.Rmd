@@ -232,7 +232,6 @@ care_mgmt %>%
 
 ```
 
-
 ### Pantry
 
 ```{r}
@@ -279,7 +278,7 @@ pantry %>%
 ### Volunteers
 
 ```{r}
-# volunteer %>% add_table()
+volunteer %>% add_table()
 ```
 
 ```{r}
