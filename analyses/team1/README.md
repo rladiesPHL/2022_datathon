@@ -4,17 +4,23 @@
 - How well is ElderNet connecting participants to the public benefits they need? (consider number of interactions, type of benefits/assistance provided, duration between ElderNet enrollment and first ride or first pantry interaction)
 - How do the counties served by ElderNet compare to similar counties where services like ElderNet are not available? (e.g. combine with Census data)
 
-
 -----------------
 
 ## Team 1 Resources
 
-### Team Meetings 
+### Resources
 
-**Wednesdays at 6pm** (subject to change, check `datathon2022_team1` Slack channel for updates)\
-Zoom Link: https://us02web.zoom.us/j/81127935017?pwd=L0J4VithUnp2SEpnTVBrd2RPcDBlZz09
+ * [Main Datathon Repo](https://github.com/rladiesPHL/2022_datathon)
+ * [ElderNet Annual Report](https://github.com/brndngrhm/2022_datathon/blob/main/analyses/team1/misc/Annual%20Report%202021.pdf)
+ * [Google goc questions for ElderNet](https://docs.google.com/document/d/17vAQniQK6KEQsS2pSP564QzXHEA6kIgHz6mgf5fXHqs/edit)
+ * Kickoff meeting [video](https://youtu.be/2dSYuYJGLk0) and [slides](https://docs.google.com/presentation/d/1KIho-PZE9CqAqW8Xr2gXCoNZnkgSXM4xOWbKnXjFN1c/edit#slide=id.g73b20e478e_0_0)
+ 
+### Team 1 Meetings 
 
-Meeting minutes  
+**Wednesdays at 6pm** - subject to change, check `datathon2022_team1` Slack channel for updates  
+**Zoom Link:** https://us02web.zoom.us/j/81127935017?pwd=L0J4VithUnp2SEpnTVBrd2RPcDBlZz09
+
+#### Meeting minutes:  
 
   * [Feb 23](https://docs.google.com/document/d/1zasFB6DBYPojBgp2FnB7pZQyV_W-MaNyPQiJllmIYFY/edit)
 
@@ -24,7 +30,7 @@ The suggested GitHub workflow is for one team member to fork the repo, and then 
  
 The forked repo Team 1 will be using is: https://github.com/brndngrhm/2022_datathon. 
 
-To **contribute code** to this fork, please use the following steps:
+To **contribute code** to the Team 1 analysis, please use the following steps:
 
  * clone the forked repo, https://github.com/brndngrhm/2022_datathon, to your local computer
  * open your local version of the repo in Windows Explorer or Finder and create a folder in the `analyses/team1` directory with your name, for example: `analyses/team1/brengan_g`
