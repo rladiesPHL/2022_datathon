@@ -164,6 +164,22 @@ care_management_clean <- care_management %>%
 
 write_csv(care_management_clean, "analyses/team1/care_management_anonymized_cleaned.v1.csv")
 
+##### NEEDS QC: Collapsing Benefit_ and Assistance variables #####
+
+# making a separate df here as I still need to QC the output
+# Can't figure out how to do this in one single pivot
+# So first pivot longer pulling `benefit` and `assistance` into a new variable called `attribute`
+# and creating a variable called instance, based on the numerical suffix in the variable names
+# This should keep `Benefit_1` linked to `Assistance_1` etc
+# Then pivot again to separate `benefit` and `assistance` back out into two variables
+care_management_clean_2 <- care_management_clean %>% 
+        pivot_longer(cols = 9:14,
+                     names_to = c("attribute", "instance"),
+                     names_pattern = "(Benefit|Assistance)_(\\d)",
+                     values_to = "service") %>% 
+        pivot_wider(names_from = attribute,
+                    values_from = service)
+
 ##### CLEANING CLIENT INFO #####
 # Not necessary, organizers already removed the duplicates
 
