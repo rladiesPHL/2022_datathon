@@ -50,7 +50,7 @@ filter(pantry, anon_ID == "15") %>% arrange(assistance_date) %>% head(10)
 
 ```
 
-```{r }
+```{r echo = FALSE, message = FALSE, results = "hide"}
 # change date to date type
 pantry <- pantry %>%
   mutate(assistance_date = as.Date(assistance_date, "%m/%d/%Y %H:%M")) 

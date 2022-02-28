@@ -15,10 +15,6 @@ had two of each of its records.
 Regardless, it’s possible the duplicate records don’t really matter if
 we focus on the number of visits (distinct dates) and when they ocurred.
 
-    # change date to date type
-    pantry <- pantry %>%
-      mutate(assistance_date = as.Date(assistance_date, "%m/%d/%Y %H:%M")) 
-
 How often do clients visit the food pantry?
 ===========================================
 
