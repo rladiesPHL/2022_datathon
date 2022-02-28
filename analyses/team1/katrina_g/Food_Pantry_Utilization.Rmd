@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Food Pantry Utilization
 
-```{r echo = FALSE}
+```{r echo = FALSE, message = FALSE }
 # load data
 pantry <- read.csv("./../../../data/pantry_anonymized.csv")
 client_data <- read.csv("./../../../data/client_info_anonymized.csv")
@@ -24,9 +24,11 @@ library(lubridate)
 
 There may be some duplicate records in the food pantry data.  However, it's possible this data is genuine because a client may have picked up multiple bags in one visit and it was documented as separate records.  
 
+12 clients clients have duplicate records.  For reference, there are 414 clients with food pantry data. As an example, anon_ID 15 looked like it had two of each of its records.  
+
 Regardless, it's possible the duplicate records don't really matter if we focus on the number of visits (distinct dates) and when they ocurred.
 
-```{r }
+```{r echo = FALSE, message = FALSE, results = "hide"}
 # records with duplicates
 duplicates <- pantry[duplicated(pantry),] 
 
@@ -100,7 +102,9 @@ hist(pantry_by_client$usage_length,
      xlab = "Usage Length (in days)")
 
 ```
-# Time in Between Pantry visits
+
+
+## Time in Between Pantry visits
 
 For clients who visited more than once, most of them visited the pantry within two months of their last visit on average.
 
