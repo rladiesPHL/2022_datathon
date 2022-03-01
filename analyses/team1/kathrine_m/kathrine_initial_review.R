@@ -164,21 +164,56 @@ care_management_clean <- care_management %>%
 
 write_csv(care_management_clean, "analyses/team1/care_management_anonymized_cleaned.v1.csv")
 
-##### NEEDS QC: Collapsing Benefit_ and Assistance variables #####
+##### INCOMPLETE: Collapsing Benefit_ and Assistance variables #####
 
-# making a separate df here as I still need to QC the output
-# Can't figure out how to do this in one single pivot
-# So first pivot longer pulling `benefit` and `assistance` into a new variable called `attribute`
-# and creating a variable called instance, based on the numerical suffix in the variable names
-# This should keep `Benefit_1` linked to `Assistance_1` etc
-# Then pivot again to separate `benefit` and `assistance` back out into two variables
-care_management_clean_2 <- care_management_clean %>% 
-        pivot_longer(cols = 9:14,
-                     names_to = c("attribute", "instance"),
-                     names_pattern = "(Benefit|Assistance)_(\\d)",
-                     values_to = "service") %>% 
-        pivot_wider(names_from = attribute,
-                    values_from = service)
+# To combine the benefit and assistance values into one set of variables
+# First split the data frame into lacking the assistance variables
+# and one lacking the benefit variables
+# Then pivoted each to generate an `assistance` or `benefit`
+# variable plus an instance variable to capture the numerical suffix
+
+
+benefit_df <- care_management_clean %>% 
+        select(-Assistance_1, -Assistance_2, -Assistance_3) %>% 
+        pivot_longer(cols = starts_with("Benefit_"),
+                     names_to = "instance",
+                     names_prefix = "Benefit_",
+                     values_to = "benefit")
+        
+
+assistance_df <- care_management_clean %>% 
+        select(-Benefit_1, -Benefit_2, -Benefit_3) %>% 
+        pivot_longer(cols = starts_with("Assistance_",
+                                        ignore.case = FALSE),
+                     names_to = "instance",
+                     names_prefix = "Assistance_",
+                     values_to = "assistance")
+
+# Finally join back together using all of the shared variables
+# Including the new `instance` variable
+# to keep `Benefit_1` linked to `Assistance_1` etc.
+
+care_management_clean_merge <- benefit_df %>% 
+        full_join(., assistance_df)
+
+write_csv(care_management_clean_merge,
+          "analyses/team1/kathrine_m/care_management_clean_merge.csv")
+
+# Quality checks
+# How many ADL entries did we see in the original df?
+
+care_management_clean %>% 
+        filter(Benefit_1 == "ADL") %>% nrow() # 124
+care_management_clean %>% 
+        filter(Benefit_2 == "ADL") %>% nrow() # 23
+care_management_clean %>% 
+        filter(Benefit_3 == "ADL") %>% nrow() # 5
+124+23+5 # 152
+care_management_clean_merge %>% 
+        filter(benefit == "ADL") %>% nrow() # 154
+# Well that's frustrating, where did the two extra come from? 
+# STILL WORKING ON THIS
+
 
 ##### CLEANING CLIENT INFO #####
 # Not necessary, organizers already removed the duplicates
