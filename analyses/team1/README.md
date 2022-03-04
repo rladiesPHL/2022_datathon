@@ -23,6 +23,7 @@
 #### Meeting minutes:  
 
   * [Feb 23](https://docs.google.com/document/d/1zasFB6DBYPojBgp2FnB7pZQyV_W-MaNyPQiJllmIYFY/edit)
+  * [Mar 2](https://docs.google.com/document/d/12azmLBQozxVxpg16DBUeCu749UCJ7d18ynS7mQNiiFA/edit?usp=sharing)
 
 ### Contributing Code
 
