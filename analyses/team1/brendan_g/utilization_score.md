@@ -58,8 +58,8 @@ global_max
     ## [1] "2021-09-15"
 
 “Padding” the client data set results in each client having the same
-number of observations - each client has 1,021 rows now representing the
-number of days between the min and max dates:
+number of observations - each client has the same number of rows now
+representing the number of days between the min and max dates:
 
 ``` r
 client_info_adj <- 
