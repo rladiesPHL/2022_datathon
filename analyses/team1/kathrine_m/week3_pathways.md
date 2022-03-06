@@ -1,17 +1,33 @@
+Team 1 Week 3: Client Timelines and Pathways
+================
+Kathrine McAulay
+3/6/2022
+
+``` r
 library(tidyverse)
 library(readxl)
 library(forcats)
 library(viridis)
+```
 
-#####
-# Need to figure out to to approach the first assist category
-# The following pipe currently contains two different attempts
-# at two slightly different metrics:
-## did the client get XYZ as their first benefit
-## did the client get XYZ in the first 30 days
-# neither works as expected, this needs work before sharing
+Start with the cleaned file from week 2, where `Benefit_1`,
+`Assistance_1` etc. have been transformed into two variables: `benefit`
+and `assistance`. Now make a few changes to add the following variables:
 
-care_management_clean_merge <- read_csv("analyses/team1/kathrine_m/care_management_clean_merge.csv") %>%
+-   `days_since_last` - arranging by `assistance_date` and grouping by
+    `anon_id`, then using the `lag()` function to refer to the previous
+    `assistance_date`
+    -   Note that this renders the first instance for each client as
+        `NA`, convert to `0`
+-   `first_assist` - similar approach to CarlT here, first
+    `assistance_date` per each `anon_id` in this dataset
+-   `last_assist` - as above for most recent date
+-   `duration` - number of days (rounded up) between `first_assist` and
+    `last_assist`
+-   `duration_bin` - binning `duration` to subsets
+
+``` r
+care_management_clean_merge <- read_csv("care_management_clean_merge.csv") %>%
         # just so I don't have to remember case:
         rename_all(tolower) %>%
         arrange(anon_id, assistance_date) %>%
@@ -30,91 +46,47 @@ care_management_clean_merge <- read_csv("analyses/team1/kathrine_m/care_manageme
                duration = as.numeric(ceiling(difftime(last_assist, first_assist,
                                                       units = "days"))),
                # what about a duration bin?
-               duration_bin = case_when(duration == 0 ~ "One time",
-                                        duration > 0 & duration <= 30 ~ "< 1 month",
-                                        duration > 30 & duration <= 90 ~ "1-3 months",
-                                        duration > 90 & duration <= 180 ~ "3-6 months",
-                                        duration > 180 & duration <= 360 ~ "6-12 months",
-                                        duration > 360 & duration <= 720 ~ "12-24 months",
-                                        TRUE ~ "> 24 months")) %>% 
+               duration_bin = case_when(
+               duration == 0 ~ "One time",
+               duration > 0 & duration <= 30 ~ "< 1 month",
+               duration > 30 & duration <= 90 ~ "1-3 months",
+               duration > 90 & duration <= 180 ~ "3-6 months",
+               duration > 180 & duration <= 360 ~ "6-12 months",
+               duration > 360 & duration <= 720 ~ "12-24 months",
+               TRUE ~ "> 24 months")) %>% 
         ungroup()
+```
 
-# Take a quick look to see if this generated the desired output
-care_management_clean_merge %>%
-        select(anon_id, assistance_date, days_since_last, duration) %>%
-        tail(n = 10L) # looks like it
+### Subsetting ElderNet Clients by Duration
 
-summary(care_management_clean_merge$days_since_last)
+Now we can look at the distribution of clients per bin, which reveals
+that 20% of clients interact with ElderNet for one day only, and a
+further 20% are in the syestem for only one month. Because I’m pretty
+bad at this, I had to first pull this out to a new data frame in order
+to tabulate the frequencies
 
-# comment this out for now
-# don't need to keep re-writing this file unless the code above changes
-write_csv(care_management_clean_merge,
-          "analyses/team1/kathrine_m/care_management_clean_merge_datediff.csv")
-
-##### Everything beyond here is untested #####
-# I don't think this code is doing what I want it to do
-# but don't have time to fix it this morning
-
+``` r
 client_timeline <- care_management_clean_merge %>% 
         select(anon_id, duration, duration_bin) %>% 
         unique()
 
-data.frame(round(100*(prop.table(table(client_timeline$duration_bin))),2)) %>% 
-        rename("Duration with ElderNet" = 1,
-               "Proportion of Clients (%)" = 2)
+round(100*(prop.table(table(client_timeline$duration_bin))),2)
+```
 
+    ## 
+    ##    < 1 month  > 24 months   1-3 months 12-24 months   3-6 months  6-12 months 
+    ##        20.20        15.10         7.35        17.55         8.16        11.22 
+    ##     One time 
+    ##        20.41
 
-care_management_clean_merge %>% 
-        select(anon_id, duration, duration_bin) %>% 
-        unique() %>% 
-        ggplot(aes(x = factor(duration_bin,
-                              levels = c("One time", "< 1 month",
-                                         "1-3 months", "3-6 months",
-                                         "6-12 months", "12-24 months",
-                                         "> 24 months")))) +
-        geom_bar(stat = "count") +
-        theme_bw() +
-        labs(title = "Client Duration with ElderNet",
-             x = "Duration",
-             y = "Number of Clients")
+I then looked at the distribution of benefits between these bins. I did
+this in a veery convoluted manner. If anyone believes there is merit in
+pursuing this further I would happily brainstorm/accept advice on a
+simpler way to do this and to retain the number of clients represented
+each time.
 
-short_term_clients <- care_management_clean_merge %>% 
-        filter(duration_bin != "12-24 months" & duration_bin != "> 24 months") %>% 
-        drop_na(benefit)
-
-short_term_client_benefits <- prop.table(table(short_term_clients$benefit))
-
-long_term_clients <- care_management_clean_merge %>% 
-        filter(duration_bin == "12-24 months" | duration_bin == "> 24 months") %>% 
-        drop_na(benefit)
-
-long_term_client_benefits <- prop.table(table(long_term_clients$benefit))
-
-benefit_by_duration <- Reduce(function(...) merge(..., all = TRUE, by = "Var1"),
-                              list(short_term_client_benefits,
-                                   long_term_client_benefits)) %>% 
-        rename(benefit = 1,
-               short_term = 2,
-               long_term = 3)
-
-benefit_by_duration %>% 
-        pivot_longer(cols = -benefit,
-                     names_to = "duration",
-                     values_to = "count") %>% 
-        ggplot(aes(x = duration, y = count, fill = benefit)) +
-        geom_col(position = "stack") +
-        scale_fill_viridis(discrete = T, option = "H") +
-        scale_x_discrete(labels = c("Long Term Clients",
-                                    "Short Term Clients")) +
-        labs(title = "Benefits Recieved by Clients Interacting with ElderNet\n
-             Over a Short (< 1 year) or Long (1-2+ years) Term",
-             x = "Duration",
-             y = "Proportion of Clients",
-             fill = "Benefit") +
-        theme_bw()
-
-
-#So then what if we repeat this for each bin
+``` r
+# generate a prop table for each bin
 one_time_clients <- care_management_clean_merge %>% 
         filter(duration_bin == "One time") %>% 
         drop_na(benefit)
@@ -127,13 +99,11 @@ less_than_one_month_clients <- care_management_clean_merge %>%
 
 less_than_one_month_client_benefits <- prop.table(table(less_than_one_month_clients$benefit))
 
-
 one_to_three_month_clients <- care_management_clean_merge %>% 
         filter(duration_bin == "1-3 months") %>% 
         drop_na(benefit)
 
 one_to_three_month_client_benefits <- prop.table(table(one_to_three_month_clients$benefit))
-
 
 three_to_six_month_clients <- care_management_clean_merge %>% 
         filter(duration_bin == "3-6 months") %>% 
@@ -141,13 +111,11 @@ three_to_six_month_clients <- care_management_clean_merge %>%
 
 three_to_six_month_client_benefits <- prop.table(table(three_to_six_month_clients$benefit))
 
-
 six_to_twelve_month_clients <- care_management_clean_merge %>% 
         filter(duration_bin == "6-12 months") %>% 
         drop_na(benefit)
 
 six_to_twelve_month_client_benefits <- prop.table(table(six_to_twelve_month_clients$benefit))
-
 
 twelve_to_twentyfour_month_clients <- care_management_clean_merge %>% 
         filter(duration_bin == "12-24 months") %>% 
@@ -155,14 +123,13 @@ twelve_to_twentyfour_month_clients <- care_management_clean_merge %>%
 
 twelve_to_twentyfour_month_client_benefits <- prop.table(table(twelve_to_twentyfour_month_clients$benefit))
 
-
 more_than_twentyfour_month_clients <- care_management_clean_merge %>% 
         filter(duration_bin == "> 24 months") %>% 
         drop_na(benefit)
 
 more_than_twentyfour_month_client_benefits <- prop.table(table(more_than_twentyfour_month_clients$benefit))
 
-
+# merge the prop tables
 benefit_by_bin <- Reduce(function(...) merge(..., all = TRUE, by = "Var1"),
                               list(one_time_client_benefits,
                                    less_than_one_month_client_benefits,
@@ -198,26 +165,43 @@ benefit_by_bin_plot <- benefit_by_bin %>%
              fill = "Benefit") +
         theme_bw() +
         theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
 
-ggsave("analyses/team1/kathrine_m/benefit_by_bin.png",
-       benefit_by_bin_plot, device = "png",
-       height = 6, width = 10, units = "in")
+![](https://github.com/brndngrhm/2022_datathon/blob/main/analyses/team1/kathrine_m/benefit_by_bin.png?raw=true)<!-- -->
 
+For the most part, I dislike stacked barcharts to get information across
+as interpreting area can be kind of subjective; however, in terms of a
+quick eyeball of the data, maybe this is helpful. Looks fairly similar
+accross the board with the one interaction only group being somewhat of
+an outlier.
 
-clients_less_than_one_year %>% 
-        drop_na(benefit) %>% 
-        ggplot(aes(x = fct_infreq(benefit))) +
-        geom_bar(stat = "count")
+**NOTE** I have not captured how many clients are represented here, will
+need to go back and do this  
+**NOTE** The shorter duration categories could represent newer clients.
+This poses two issues:
 
-long_term_clients %>% 
-        drop_na(benefit) %>% 
-        ggplot(aes(x = fct_infreq(benefit))) +
-        geom_bar(stat = "count")
+-   They may continue to use ElderNet now, and simply the sampling time
+    may misrepresent them  
+-   They may also be skewed by having more benefit data present, since
+    we know that this data is incomplete for the earlier interactions
 
+### Clients interacting with ElderNet over 1-2 years
 
+While we can’t define a long or short duration with ElderNet as positive
+or negative due to the missing outcome data, what we can say is that:
 
-table(clients_less_than_one_year$benefit)
-table(long_term_clients$benefit)
+160 clients received services over a 1-2 year period that presumably
+kept them in their homes for that duration. I think this is an important
+impact message to get across.
 
+### Caveats/Remaining questions
 
+Some concepts that I am not sure how to address:
 
+-   People binned to `one_time` or `< 1 month` may in fact be newer
+    enrollments, how to account for these?
+-   We can’t assign a positive or negative attribute to either short or
+    long duration in the ElderNet system, so how do we make this
+    information outcome agnostic?
+-   I appeal to other group members for help with sats/probabilities in
+    answering these questions, as it is not my strong point
