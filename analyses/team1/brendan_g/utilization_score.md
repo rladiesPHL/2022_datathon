@@ -435,7 +435,7 @@ active_clients %>%
     ## 32 2021-08-01     210             2          2                1
     ## 33 2021-09-01     210             1          1.67             1
 
-but Client 1 was never an active client:
+but Client 1 dropped out of active client status:
 
 ``` r
 active_clients %>% 

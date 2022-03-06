@@ -282,7 +282,7 @@ active_clients %>%
   print(n = 40)
 ```
 
-but Client 1 was never an active client: 
+but Client 1 dropped out of active client status: 
 
 ```{r}
 active_clients %>% 
