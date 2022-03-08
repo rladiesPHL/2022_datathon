@@ -48,22 +48,23 @@ summary(care_management_clean_merge$days_since_last)
 
 # comment this out for now
 # don't need to keep re-writing this file unless the code above changes
-write_csv(care_management_clean_merge,
-          "analyses/team1/kathrine_m/care_management_clean_merge_datediff.csv")
+# write_csv(care_management_clean_merge,
+#           "analyses/team1/kathrine_m/care_management_clean_merge_datediff.csv")
 
-##### Everything beyond here is untested #####
-# I don't think this code is doing what I want it to do
-# but don't have time to fix it this morning
 
+# Pull the duration info by client out to a new df
+# as was having issues tabulating from the df with multiple observations per client
 client_timeline <- care_management_clean_merge %>% 
         select(anon_id, duration, duration_bin) %>% 
         unique()
 
+# create a prop table to eyeball how the clients are distributed in each bin
 data.frame(round(100*(prop.table(table(client_timeline$duration_bin))),2)) %>% 
         rename("Duration with ElderNet" = 1,
                "Proportion of Clients (%)" = 2)
 
 
+# essentially the info from the prop table but in a chart
 care_management_clean_merge %>% 
         select(anon_id, duration, duration_bin) %>% 
         unique() %>% 
@@ -78,43 +79,48 @@ care_management_clean_merge %>%
              x = "Duration",
              y = "Number of Clients")
 
-short_term_clients <- care_management_clean_merge %>% 
-        filter(duration_bin != "12-24 months" & duration_bin != "> 24 months") %>% 
-        drop_na(benefit)
+# First tried segregating to short term (<=12 months) and long term (>12 months)
+# but I didn't like this arbitrary definition
+# comment out for now and keep the duration bin option below instead
+# short_term_clients <- care_management_clean_merge %>% 
+#         filter(duration_bin != "12-24 months" & duration_bin != "> 24 months") %>% 
+#         drop_na(benefit)
+# 
+# short_term_client_benefits <- prop.table(table(short_term_clients$benefit))
+# 
+# long_term_clients <- care_management_clean_merge %>% 
+#         filter(duration_bin == "12-24 months" | duration_bin == "> 24 months") %>% 
+#         drop_na(benefit)
+# 
+# long_term_client_benefits <- prop.table(table(long_term_clients$benefit))
+# 
+# benefit_by_duration <- Reduce(function(...) merge(..., all = TRUE, by = "Var1"),
+#                               list(short_term_client_benefits,
+#                                    long_term_client_benefits)) %>% 
+#         rename(benefit = 1,
+#                short_term = 2,
+#                long_term = 3)
+# 
+# benefit_by_duration %>% 
+#         pivot_longer(cols = -benefit,
+#                      names_to = "duration",
+#                      values_to = "count") %>% 
+#         ggplot(aes(x = duration, y = count, fill = benefit)) +
+#         geom_col(position = "stack") +
+#         scale_fill_viridis(discrete = T, option = "H") +
+#         scale_x_discrete(labels = c("Long Term Clients",
+#                                     "Short Term Clients")) +
+#         labs(title = "Benefits Recieved by Clients Interacting with ElderNet\n
+#              Over a Short (< 1 year) or Long (1-2+ years) Term",
+#              x = "Duration",
+#              y = "Proportion of Clients",
+#              fill = "Benefit") +
+#         theme_bw()
 
-short_term_client_benefits <- prop.table(table(short_term_clients$benefit))
 
-long_term_clients <- care_management_clean_merge %>% 
-        filter(duration_bin == "12-24 months" | duration_bin == "> 24 months") %>% 
-        drop_na(benefit)
-
-long_term_client_benefits <- prop.table(table(long_term_clients$benefit))
-
-benefit_by_duration <- Reduce(function(...) merge(..., all = TRUE, by = "Var1"),
-                              list(short_term_client_benefits,
-                                   long_term_client_benefits)) %>% 
-        rename(benefit = 1,
-               short_term = 2,
-               long_term = 3)
-
-benefit_by_duration %>% 
-        pivot_longer(cols = -benefit,
-                     names_to = "duration",
-                     values_to = "count") %>% 
-        ggplot(aes(x = duration, y = count, fill = benefit)) +
-        geom_col(position = "stack") +
-        scale_fill_viridis(discrete = T, option = "H") +
-        scale_x_discrete(labels = c("Long Term Clients",
-                                    "Short Term Clients")) +
-        labs(title = "Benefits Recieved by Clients Interacting with ElderNet\n
-             Over a Short (< 1 year) or Long (1-2+ years) Term",
-             x = "Duration",
-             y = "Proportion of Clients",
-             fill = "Benefit") +
-        theme_bw()
-
-
-#So then what if we repeat this for each bin
+# So then what if we repeat this for each bin
+# i.e. split clients out depending on what bin they fall into
+# and then look at benefit distribution
 one_time_clients <- care_management_clean_merge %>% 
         filter(duration_bin == "One time") %>% 
         drop_na(benefit)
@@ -203,21 +209,35 @@ ggsave("analyses/team1/kathrine_m/benefit_by_bin.png",
        benefit_by_bin_plot, device = "png",
        height = 6, width = 10, units = "in")
 
+# Concerned that clients in the shorter bins may just represent newer clients
+# and that this may be additionally skewed because only the more recent entries 
+# have benefit values assigned
+# So what if we instead look at all clients in the first month versus latter time points
+# This will actually require a different binning system
 
-clients_less_than_one_year %>% 
+test <- care_management_clean_merge %>%
+        group_by(anon_id) %>% 
+        mutate(days_since_first = as.numeric(ceiling(difftime(assistance_date, first_assist,
+                                          units = "days"))),
+               time_point_bin = case_when(days_since_first < 30 ~ "first month",
+                                          days_since_first >= 30 &
+                                                  days_since_first < 90 ~ "1-3 months",
+                                          days_since_first >= 90 &
+                                                  days_since_first < 180 ~ "3-6 months",
+                                          days_since_first >= 180 &
+                                                  days_since_first < 360 ~ "6-12 months",
+                                          days_since_first >= 360 &
+                                                  days_since_first < 720 ~ "12-24 months",
+                                          days_since_first > 720 ~ "> 24 months"),
+               time_point_bin = factor(time_point_bin,
+                                       levels = c("first month", "1-3 months",
+                                                  "3-6 months", "6-12 months",
+                                                  "12-24 months", "> 24 months")))
+
+test %>% 
         drop_na(benefit) %>% 
-        ggplot(aes(x = fct_infreq(benefit))) +
-        geom_bar(stat = "count")
-
-long_term_clients %>% 
-        drop_na(benefit) %>% 
-        ggplot(aes(x = fct_infreq(benefit))) +
-        geom_bar(stat = "count")
-
-
-
-table(clients_less_than_one_year$benefit)
-table(long_term_clients$benefit)
+        ggplot(aes(x = time_point_bin, fill = benefit)) +
+        geom_bar(stat = "count", position = "stack")
 
 
 
