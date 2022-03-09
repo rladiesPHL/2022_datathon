@@ -215,7 +215,7 @@ ggsave("analyses/team1/kathrine_m/benefit_by_bin.png",
 # So what if we instead look at all clients in the first month versus latter time points
 # This will actually require a different binning system
 
-test <- care_management_clean_merge %>%
+care_management_clean_merge2 <- care_management_clean_merge %>%
         group_by(anon_id) %>% 
         mutate(days_since_first = as.numeric(ceiling(difftime(assistance_date, first_assist,
                                           units = "days"))),
@@ -228,16 +228,61 @@ test <- care_management_clean_merge %>%
                                                   days_since_first < 360 ~ "6-12 months",
                                           days_since_first >= 360 &
                                                   days_since_first < 720 ~ "12-24 months",
-                                          days_since_first > 720 ~ "> 24 months"),
+                                          days_since_first >= 720 ~ "> 24 months"),
                time_point_bin = factor(time_point_bin,
                                        levels = c("first month", "1-3 months",
                                                   "3-6 months", "6-12 months",
                                                   "12-24 months", "> 24 months")))
 
-test %>% 
+
+# basic stacked bar plot showing counts
+care_management_clean_merge2 %>% 
         drop_na(benefit) %>% 
         ggplot(aes(x = time_point_bin, fill = benefit)) +
-        geom_bar(stat = "count", position = "stack")
+        geom_bar(stat = "count", position = "stack") +
+        scale_fill_viridis(discrete = TRUE, option = "H") +
+        labs(title = "ElderNet Client Benefit Receipt by Time in Service\nData represents 300/490 (61.2%) clients and 4744/37497 (12.7%) records",
+             x = "Time of Benefit Receipt Since Enrollment",
+             y = "Count of Benefits Received",
+             fill = "Benefit") +
+        theme_bw()
 
+label_df <- care_management_clean_merge2 %>% group_by(time_point_bin) %>% summarise(n=n())
+label_df$benefit <- NA
+
+# now map proportion instead of count to the y axis
+# will need to add geom text for total n
+care_management_clean_merge2 %>% 
+        drop_na(benefit) %>% 
+        ggplot(aes(x = time_point_bin, fill = benefit)) +
+        geom_bar(stat = "count", position = "fill") +
+        #geom_text() can't remember how to use this to add totals
+        scale_fill_viridis(discrete = TRUE, option = "H") +
+        labs(title = "ElderNet Client Benefit Receipt by Time in Service\nData represents 300/490 (61.2%) clients and 4744/37497 (12.7%) records",
+             x = "Time of Benefit Receipt Since Enrollment",
+             y = "Proportion of Benefits Received",
+             fill = "Benefit") +
+        theme_bw()
+
+
+# How many clients in this dataset?
+care_management_clean_merge2 %>% 
+        drop_na(benefit) %>% 
+        select(anon_id) %>% 
+        unique() %>% 
+        nrow() # 300
+
+# And how many assistance interactions:
+care_management_clean_merge2 %>% 
+        drop_na(benefit) %>% 
+        nrow() #4744
+
+# It doesn't look like there is a whole lot of difference between the distributions
+# Suggests that the clients are using the service for consistent reasons?
+# How to approach this mathematically?
+
+test %>% 
+        select(anon_id, assistance_date, days_since_first, time_point_bin) %>%
+        filter(is.na(time_point_bin))
 
 
