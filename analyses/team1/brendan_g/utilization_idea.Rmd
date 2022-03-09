@@ -110,7 +110,7 @@ client <-
 
 care_mgmt_util <-
   care_mgmt %>%
-  filter(anon_ID == client) %>%
+  # filter(anon_ID == client) %>%
   mutate(month = as.Date(floor_date(assistance_date, 'month'))) %>%
   group_by(anon_ID, month) %>%
   summarise(total_care_mgmt_encounters = n(),
@@ -119,7 +119,7 @@ care_mgmt_util <-
 
 pantry_util <- 
   pantry %>%
-  filter(anon_ID == client) %>%
+  # filter(anon_ID == client) %>%
   mutate(month = as.Date(floor_date(mdy_hm(assistance_date), 'month'))) %>%
   group_by(anon_ID, month) %>%
   summarise(total_pantry_encounters = n(),
@@ -128,7 +128,7 @@ pantry_util <-
 
 volunteer_util <- 
   volunteer %>%
-  filter(anon_ID == client) %>%
+  # filter(anon_ID == client) %>%
   mutate(month = as.Date(floor_date(mdy(appt_date), 'month'))) %>%
   group_by(anon_ID, month) %>%
   summarise(total_volunteer_encounters = n(),
@@ -137,11 +137,38 @@ volunteer_util <-
 
 total_util <-
   client_info %>%
-  filter(anon_ID == client) %>%
-  select(anon_ID) %>%
+  # filter(anon_ID == client) %>%
+  # select(anon_ID) %>%
   left_join(., care_mgmt_util, by = c("anon_ID")) %>%
   left_join(., pantry_util, by = c("anon_ID", "month")) %>%
   left_join(., volunteer_util, by = c("anon_ID", "month")) 
+
+total_util %>% add_table()
+
+
+total_util %>%
+  group_by(month, poverty) %>%
+  summarise(total_care_mgmt_encounters = sum(total_care_mgmt_encounters)) %>%
+  ggplot(., aes(x = month, y = total_care_mgmt_encounters, group = poverty, fill = poverty, color = poverty)) + 
+  geom_point()  +
+  geom_line() + 
+  scale_x_date(breaks = scales::date_breaks("3 months"))
+
+total_util %>%
+  group_by(month, poverty) %>%
+  summarise(total_pantry_encounters = sum(total_pantry_encounters, na.rm = T)) %>%
+  ggplot(., aes(x = month, y = total_pantry_encounters, group = poverty, fill = poverty, color = poverty)) + 
+  geom_point()  +
+  geom_line() + 
+  scale_x_date(breaks = scales::date_breaks("3 months"))
+
+total_util %>%
+  group_by(month, poverty) %>%
+  summarise(total_pantry_pounds = sum(total_pantry_pounds, na.rm = T)) %>%
+  ggplot(., aes(x = month, y = total_pantry_pounds, group = poverty, fill = poverty, color = poverty)) + 
+  geom_point()  +
+  geom_line() + 
+  scale_x_date(breaks = scales::date_breaks("3 months"))
 
 ```
 

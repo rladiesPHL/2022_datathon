@@ -291,8 +291,7 @@ active_clients %>%
   print(n = 40)
 ```
 
-Plotting the active clients each month shows the impact of COVID 19
-
+Plotting the overall active clients each month shows the impact of COVID 19
 ```{r}
 
 map_dfr(client_ids, ~get_active_clients(data = monthly_util, client = .x)) %>%
@@ -302,6 +301,21 @@ map_dfr(client_ids, ~get_active_clients(data = monthly_util, client = .x)) %>%
   ggplot(., aes(x = month, y = active_clients)) + 
   geom_point() + 
   geom_line() + 
+  labs(x = 'month', y = "Count", title = 'Active Clients per Month')
+
+```   
+
+plotting active clients per month, poverty status and minority status shows how active minority clients with poverty = yes showed almost not change through the pandemic 
+```{r}
+
+map_dfr(client_ids, ~get_active_clients(data = monthly_util, client = .x)) %>%
+  ungroup() %>%
+  group_by(month, poverty, minority) %>%
+  summarise(active_clients = sum(active_client)) %>%
+  ggplot(., aes(x = month, y = active_clients, color = poverty)) + 
+  geom_point() + 
+  geom_line() + 
+  facet_wrap(vars(minority)) + 
   labs(x = 'month', y = "Count", title = 'Active Clients per Month')
 
 ```   

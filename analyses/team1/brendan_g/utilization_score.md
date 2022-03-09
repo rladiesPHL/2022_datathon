@@ -452,7 +452,8 @@ active_clients %>%
     ## 3 2021-08-01       1             0         0.667             0
     ## 4 2021-09-01       1             0         0.333             0
 
-Plotting the active clients each month shows the impact of COVID 19
+Plotting the overall active clients each month shows the impact of COVID
+19
 
 ``` r
 map_dfr(client_ids, ~get_active_clients(data = monthly_util, client = .x)) %>%
@@ -466,6 +467,24 @@ map_dfr(client_ids, ~get_active_clients(data = monthly_util, client = .x)) %>%
 ```
 
 ![](utilization_score_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+
+plotting active clients per month, poverty status and minority status
+shows how active minority clients with poverty = yes showed almost not
+change through the pandemic
+
+``` r
+map_dfr(client_ids, ~get_active_clients(data = monthly_util, client = .x)) %>%
+  ungroup() %>%
+  group_by(month, poverty, minority) %>%
+  summarise(active_clients = sum(active_client)) %>%
+  ggplot(., aes(x = month, y = active_clients, color = poverty)) + 
+  geom_point() + 
+  geom_line() + 
+  facet_wrap(vars(minority)) + 
+  labs(x = 'month', y = "Count", title = 'Active Clients per Month')
+```
+
+![](utilization_score_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
 
 #### other ways to measure utilization
 
@@ -492,7 +511,7 @@ monthly_util %>%
   labs(x = "month", y = "Total monthly encounters", title = " Encounters by service and minority status")
 ```
 
-![](utilization_score_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+![](utilization_score_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
 
 It does seem like ElderNet was able to successfully transition to remote
 contact when the pandemic hit:
@@ -521,4 +540,4 @@ client_info %>%
   labs(x = "month", y = "monthly encounters", title = "Care mgmt encounters by service")
 ```
 
-![](utilization_score_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
+![](utilization_score_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
