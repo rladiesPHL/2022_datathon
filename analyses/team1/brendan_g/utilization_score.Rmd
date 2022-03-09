@@ -288,7 +288,7 @@ but Client 1 dropped out of active client status:
 active_clients %>% 
   filter(anon_ID == "1")%>%
   select(month, anon_ID, num_svcs_used, lookback_mean, active_client) %>%
-  print(n = 40)
+  print(n = 40) 
 ```
 
 Plotting the overall active clients each month shows the impact of COVID 19
