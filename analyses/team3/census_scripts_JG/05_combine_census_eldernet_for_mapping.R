@@ -32,6 +32,9 @@ zctas2 <- zctas %>%
         left_join(census, by = c("ZCTA5CE20" = "GEOID")) %>% 
         st_as_sf()
 
+zctas2 <- zctas2 %>% 
+        select(-ZCTA5CE20.y)
+
 
 eldernet <- read_csv("analyses/team3/team3_data/census_model_data/EldnerNet_by_ZIP.csv")
 eldernet <- eldernet %>% 
@@ -53,7 +56,7 @@ eldernet2 <- eldernet2 %>%
 eldernet2 <- eldernet2 %>% 
         filter(!is.na(NAME))
 
-st_write(eldernet2, dsn = "analyses/team3/team3_data/census_model_data/eldernet_big_combined.gpkg")
+st_write(eldernet2, dsn = "analyses/team3/team3_data/census_model_data/eldernet_big_combined.gpkg", delete_dsn = TRUE)
 #making initial maps from the census variables------------
 
 # mf_map(x = eldernet2)
