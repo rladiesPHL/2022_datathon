@@ -315,7 +315,7 @@ monthly_util <-
   filter(active_period == 1)
 ```
 
-Example output (some column left out for display purposes)
+Example output (some columns left out for display purposes)
 
 ``` r
 monthly_util %>% 
@@ -367,121 +367,135 @@ consistently use services over time.
 
 The logic is, for each client:
 
--   calculate a 3 month rolling mean of services used
--   check if that rolling mean is at least 1, meaning on avg they use 1
-    type of service offered each month for the past 3 months
+-   for each client for each month, calculate the number of ElderNet
+    services they engaged with. This number will range from a minimum of
+    0 if they didn’t use any services, to a maximum of 3 if a client
+    used the pantry, volunteer services and care mgmt services in that
+    month.
+-   calculate a rolling mean of services a client engaged with both over
+    the past 2 months, and over the past 3 months
+-   check if that rolling mean is over a threshold, and if so define
+    that client as being active in that month
+-   several thresholds are defined for the sake of example
 
 ``` r
 get_active_clients <-
-  function(data, client, lookback = 2){
+  function(data, client, lookback = 2, threshold = 1){
+    # 
+    # client <- 610
+    # data <- monthly_util
+    # lookback <- 2
 
     data %>%
       ungroup() %>%
       filter(anon_ID == {{client}}) %>%
-      mutate(lookback_mean = slider::slide_dbl(num_svcs_used, mean, .before = lookback, .after = 0),
-             active_client = ifelse(lookback_mean >= 1, 1, 0))
+      mutate(lookback_mean_2mo = round(slider::slide_dbl(num_svcs_used, mean, .before = 1, .after = 0), 2),
+             lookback_mean_3mo = round(slider::slide_dbl(num_svcs_used, mean, .before = 2, .after = 0), 2),
+             
+             # used at least 1 svc offered (pantry, volunteer, care mgmt) in 2 of the 2 previous months
+             active_client_2mo = ifelse(lookback_mean_2mo >= 1, 1, 0), 
+              
+             # used at least 1 svc offered (pantry, volunteer, care mgmt) in 3 of the 3 previous months
+             active_client_3mo = ifelse(lookback_mean_3mo >= 1, 1, 0), # used svcs in 3 of the 3 previous months
+             
+             # used at least 1 svc offered (pantry, volunteer, care mgmt) in 1 of the 2 previous months
+             active_client_2mo_relaxed = ifelse(lookback_mean_2mo >= .5, 1, 0),
+             
+             # used at least 1 svc offered (pantry, volunteer, care mgmt) in 2 of the 3 previous months
+             active_client_3mo_relaxed = ifelse(lookback_mean_3mo >= .67, 1, 0),
+             
+             # used at least 1 svc offered (pantry, volunteer, care mgmt) in 1 of the 3 previous months
+             active_client_3mo_extra_relaxed = ifelse(lookback_mean_3mo >= .33, 1, 0)
+             ) 
   }
 
 client_ids <- 
   sort(unique(monthly_util$anon_ID))
 
 active_clients <- 
-  map_dfr(client_ids, ~get_active_clients(data = monthly_util, client = .x)) 
+  map_dfr(client_ids, ~get_active_clients(data = monthly_util, client = .x))
 ```
 
-using this methodology, Client 210 was an active client each month:
+**Examples**
+
+Client 610 for the 12 months in 2020 fell into and out of being an
+active client at different times depending on the metric being used.
 
 ``` r
 active_clients %>% 
-  filter(anon_ID == "210") %>%
-  select(month, anon_ID, num_svcs_used, lookback_mean, active_client) %>%
-  print(n = 40)
+  filter(anon_ID == "610",
+         month >= "2020-01-01",
+         month <= "2020-12-31") %>%
+  select(month, anon_ID, num_svcs_used, starts_with("lookback"), starts_with("active")) %>%
+  select(-active_period) %>% 
+  reactable::reactable(resizable = T, wrap = F, defaultPageSize = 12)
 ```
 
-    ## # A tibble: 33 × 5
-    ##    month      anon_ID num_svcs_used lookback_mean active_client
-    ##    <date>       <dbl>         <dbl>         <dbl>         <dbl>
-    ##  1 2019-01-01     210             3          3                1
-    ##  2 2019-02-01     210             3          3                1
-    ##  3 2019-03-01     210             3          3                1
-    ##  4 2019-04-01     210             3          3                1
-    ##  5 2019-05-01     210             3          3                1
-    ##  6 2019-06-01     210             2          2.67             1
-    ##  7 2019-07-01     210             3          2.67             1
-    ##  8 2019-08-01     210             3          2.67             1
-    ##  9 2019-09-01     210             3          3                1
-    ## 10 2019-10-01     210             3          3                1
-    ## 11 2019-11-01     210             3          3                1
-    ## 12 2019-12-01     210             3          3                1
-    ## 13 2020-01-01     210             1          2.33             1
-    ## 14 2020-02-01     210             3          2.33             1
-    ## 15 2020-03-01     210             3          2.33             1
-    ## 16 2020-04-01     210             2          2.67             1
-    ## 17 2020-05-01     210             2          2.33             1
-    ## 18 2020-06-01     210             2          2                1
-    ## 19 2020-07-01     210             1          1.67             1
-    ## 20 2020-08-01     210             2          1.67             1
-    ## 21 2020-09-01     210             1          1.33             1
-    ## 22 2020-10-01     210             2          1.67             1
-    ## 23 2020-11-01     210             2          1.67             1
-    ## 24 2020-12-01     210             2          2                1
-    ## 25 2021-01-01     210             2          2                1
-    ## 26 2021-02-01     210             2          2                1
-    ## 27 2021-03-01     210             2          2                1
-    ## 28 2021-04-01     210             2          2                1
-    ## 29 2021-05-01     210             1          1.67             1
-    ## 30 2021-06-01     210             2          1.67             1
-    ## 31 2021-07-01     210             2          1.67             1
-    ## 32 2021-08-01     210             2          2                1
-    ## 33 2021-09-01     210             1          1.67             1
+<div id="htmlwidget-21c3c8093649e8dea1c2" class="reactable html-widget" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-21c3c8093649e8dea1c2">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"month":["2020-01-01","2020-02-01","2020-03-01","2020-04-01","2020-05-01","2020-06-01","2020-07-01","2020-08-01","2020-09-01","2020-10-01","2020-11-01","2020-12-01"],"anon_ID":[610,610,610,610,610,610,610,610,610,610,610,610],"num_svcs_used":[0,0,0,0,1,1,1,0,0,0,0,0],"lookback_mean_2mo":[0,0,0,0,0.5,1,1,0.5,0,0,0,0],"lookback_mean_3mo":[0.33,0,0,0,0.33,0.67,1,0.67,0.33,0,0,0],"active_client_2mo":[0,0,0,0,0,1,1,0,0,0,0,0],"active_client_3mo":[0,0,0,0,0,0,1,0,0,0,0,0],"active_client_2mo_relaxed":[0,0,0,0,1,1,1,1,0,0,0,0],"active_client_3mo_relaxed":[0,0,0,0,0,1,1,1,0,0,0,0],"active_client_3mo_extra_relaxed":[1,0,0,0,1,1,1,1,1,0,0,0]},"columns":[{"accessor":"month","name":"month","type":"Date"},{"accessor":"anon_ID","name":"anon_ID","type":"numeric"},{"accessor":"num_svcs_used","name":"num_svcs_used","type":"numeric"},{"accessor":"lookback_mean_2mo","name":"lookback_mean_2mo","type":"numeric"},{"accessor":"lookback_mean_3mo","name":"lookback_mean_3mo","type":"numeric"},{"accessor":"active_client_2mo","name":"active_client_2mo","type":"numeric"},{"accessor":"active_client_3mo","name":"active_client_3mo","type":"numeric"},{"accessor":"active_client_2mo_relaxed","name":"active_client_2mo_relaxed","type":"numeric"},{"accessor":"active_client_3mo_relaxed","name":"active_client_3mo_relaxed","type":"numeric"},{"accessor":"active_client_3mo_extra_relaxed","name":"active_client_3mo_extra_relaxed","type":"numeric"}],"resizable":true,"defaultPageSize":12,"paginationType":"numbers","showPageInfo":true,"minRows":1,"nowrap":true,"dataKey":"6465996318cd678c61d774de1e20ee3b","key":"6465996318cd678c61d774de1e20ee3b"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
 
-but Client 1 dropped out of active client status:
+On the other hand, client 210 was an active client each month in 2020 no
+matter which metric is used:
 
 ``` r
 active_clients %>% 
-  filter(anon_ID == "1")%>%
-  select(month, anon_ID, num_svcs_used, lookback_mean, active_client) %>%
-  print(n = 40)
+  filter(anon_ID == "210",
+         month >= "2020-01-01",
+         month <= "2020-12-31") %>%
+  select(month, anon_ID, num_svcs_used, starts_with("lookback"), starts_with("active")) %>%
+  select(-active_period) %>% 
+  reactable::reactable(resizable = T, wrap = F, defaultPageSize = 12)
 ```
 
-    ## # A tibble: 4 × 5
-    ##   month      anon_ID num_svcs_used lookback_mean active_client
-    ##   <date>       <dbl>         <dbl>         <dbl>         <dbl>
-    ## 1 2021-06-01       1             1         1                 1
-    ## 2 2021-07-01       1             1         1                 1
-    ## 3 2021-08-01       1             0         0.667             0
-    ## 4 2021-09-01       1             0         0.333             0
+<div id="htmlwidget-82be4dd43ffbdee54065" class="reactable html-widget" style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-82be4dd43ffbdee54065">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"month":["2020-01-01","2020-02-01","2020-03-01","2020-04-01","2020-05-01","2020-06-01","2020-07-01","2020-08-01","2020-09-01","2020-10-01","2020-11-01","2020-12-01"],"anon_ID":[210,210,210,210,210,210,210,210,210,210,210,210],"num_svcs_used":[1,3,3,2,2,2,1,2,1,2,2,2],"lookback_mean_2mo":[2,2,3,2.5,2,2,1.5,1.5,1.5,1.5,2,2],"lookback_mean_3mo":[2.33,2.33,2.33,2.67,2.33,2,1.67,1.67,1.33,1.67,1.67,2],"active_client_2mo":[1,1,1,1,1,1,1,1,1,1,1,1],"active_client_3mo":[1,1,1,1,1,1,1,1,1,1,1,1],"active_client_2mo_relaxed":[1,1,1,1,1,1,1,1,1,1,1,1],"active_client_3mo_relaxed":[1,1,1,1,1,1,1,1,1,1,1,1],"active_client_3mo_extra_relaxed":[1,1,1,1,1,1,1,1,1,1,1,1]},"columns":[{"accessor":"month","name":"month","type":"Date"},{"accessor":"anon_ID","name":"anon_ID","type":"numeric"},{"accessor":"num_svcs_used","name":"num_svcs_used","type":"numeric"},{"accessor":"lookback_mean_2mo","name":"lookback_mean_2mo","type":"numeric"},{"accessor":"lookback_mean_3mo","name":"lookback_mean_3mo","type":"numeric"},{"accessor":"active_client_2mo","name":"active_client_2mo","type":"numeric"},{"accessor":"active_client_3mo","name":"active_client_3mo","type":"numeric"},{"accessor":"active_client_2mo_relaxed","name":"active_client_2mo_relaxed","type":"numeric"},{"accessor":"active_client_3mo_relaxed","name":"active_client_3mo_relaxed","type":"numeric"},{"accessor":"active_client_3mo_extra_relaxed","name":"active_client_3mo_extra_relaxed","type":"numeric"}],"resizable":true,"defaultPageSize":12,"paginationType":"numbers","showPageInfo":true,"minRows":1,"nowrap":true,"dataKey":"a6f07e387eb62a01671662a11bc000f4","key":"a6f07e387eb62a01671662a11bc000f4"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
 
-Plotting the overall active clients each month shows the impact of COVID
-19
+Plotting the different measure of active clients shows the effect of
+relaxing the definition allows more clients to fall into the ‘active’
+definition each month.
 
 ``` r
-map_dfr(client_ids, ~get_active_clients(data = monthly_util, client = .x)) %>%
+active_clients %>%
   ungroup() %>%
   group_by(month) %>%
-  summarise(active_clients = sum(active_client)) %>%
-  ggplot(., aes(x = month, y = active_clients)) + 
+  summarise(`2 month strict` = sum(active_client_2mo),
+            `3 month strict` = sum(active_client_3mo),
+            `2 month relaxed`= sum(active_client_2mo_relaxed),
+            `3 month relaxed` = sum(active_client_3mo_relaxed),
+            `3 month extra relaxed` = sum(active_client_3mo_extra_relaxed),
+            ) %>% 
+  pivot_longer(2:6) %>%
+  mutate(category = ifelse(name %in% c("2 month strict", '3 month strict'), 'Strict Definition', "Relaxed Definition")) %>%
+  filter(month < max(month)) %>%
+  ggplot(., aes(x = month, y = value, color = name)) + 
   geom_point() + 
   geom_line() + 
-  labs(x = 'month', y = "Count", title = 'Active Clients per Month')
+  labs(x = 'month', y = "Count", title = 'Active Clients per Month') + 
+  scale_color_npg() + 
+  # facet_wrap(vars(category))  +
+  labs(x = 'Month', y = 'Active Clients', color = 'Metric', title = 'Montly Active Clients Across Definition Types')
 ```
 
 ![](utilization_score_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
 
-plotting active clients per month, poverty status and minority status
-shows how active minority clients with poverty = yes showed almost not
-change through the pandemic
+taking into account poverty status and minority status shows how active
+clients with `poverty = yes`and `minority = yes` showed almost no change
+through the pandemic. This is illustrative of how the ElderNet serves
+really serve as a lifeline to this population.
 
 ``` r
-map_dfr(client_ids, ~get_active_clients(data = monthly_util, client = .x)) %>%
+active_clients %>%
   ungroup() %>%
-  group_by(month, poverty, minority) %>%
-  summarise(active_clients = sum(active_client)) %>%
-  ggplot(., aes(x = month, y = active_clients, color = poverty)) + 
+  mutate(poverty_label = ifelse(poverty == "Yes", "Poverty: Yes", "Poverty: No"),
+         minority_label = ifelse(minority == "Yes", "Minority: Yes", "Minority: No")) %>%
+  filter(month < max(month)) %>%
+  group_by(month, poverty_label, minority_label) %>%
+  summarise(active_clients = sum(active_client_3mo)) %>%
+  ggplot(., aes(x = month, y = active_clients, color = poverty_label)) + 
   geom_point() + 
   geom_line() + 
-  facet_wrap(vars(minority)) + 
-  labs(x = 'month', y = "Count", title = 'Active Clients per Month')
+  facet_wrap(vars(minority_label)) + 
+  labs(x = 'month', y = "Count", title = 'Active Clients per Month', color = NULL)
 ```
 
 ![](utilization_score_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
@@ -490,6 +504,26 @@ map_dfr(client_ids, ~get_active_clients(data = monthly_util, client = .x)) %>%
 
 Another way to measure utilization is to add up each type of encounter
 per client per month.
+
+``` r
+monthly_util %>%
+  select(anon_ID, month, ends_with("encounters")) %>% 
+  as_tibble() %>% 
+  pivot_longer(3:ncol(.)) %>%
+  filter(month < max(month)) %>%
+  group_by(month, name) %>%
+  summarise(total_encounters = sum(value, na.rm = T),
+            mean_encounters = mean(value, na.rm = T),
+            sd_util = sum(value, na.rm = T)) %>%
+  ggplot(aes(x = month, y = total_encounters, color = name)) +
+  geom_point(show.legend = FALSE) +
+  geom_line(show.legend = FALSE) + 
+  facet_wrap(vars(name)) + 
+  scale_color_npg() + 
+  labs(x = "month", y = "Total monthly encounters", title = " Encounters by service")
+```
+
+![](utilization_score_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
 
 It appears that volunteer encounters for minority clients is not
 recovering the same as non-minority clients after the shock of the
@@ -507,11 +541,11 @@ monthly_util %>%
   ggplot(aes(x = month, y = total_encounters, color = minority)) +
   geom_point() +
   geom_line() + 
-  facet_wrap(vars(name), scales = 'free') + 
+  facet_wrap(vars(name)) + 
   labs(x = "month", y = "Total monthly encounters", title = " Encounters by service and minority status")
 ```
 
-![](utilization_score_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
+![](utilization_score_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
 
 It does seem like ElderNet was able to successfully transition to remote
 contact when the pandemic hit:
@@ -540,4 +574,4 @@ client_info %>%
   labs(x = "month", y = "monthly encounters", title = "Care mgmt encounters by service")
 ```
 
-![](utilization_score_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
+![](utilization_score_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
