@@ -396,7 +396,7 @@ get_active_clients <-
              active_client_2mo = ifelse(lookback_mean_2mo >= 1, 1, 0), 
               
              # used at least 1 svc offered (pantry, volunteer, care mgmt) in 3 of the 3 previous months
-             active_client_3mo = ifelse(lookback_mean_3mo >= 1, 1, 0), # used svcs in 3 of the 3 previous months
+             active_client_3mo = ifelse(lookback_mean_3mo >= 1, 1, 0),
              
              # used at least 1 svc offered (pantry, volunteer, care mgmt) in 1 of the 2 previous months
              active_client_2mo_relaxed = ifelse(lookback_mean_2mo >= .5, 1, 0),
@@ -428,11 +428,31 @@ active_clients %>%
          month <= "2020-12-31") %>%
   select(month, anon_ID, num_svcs_used, starts_with("lookback"), starts_with("active")) %>%
   select(-active_period) %>% 
-  reactable::reactable(resizable = T, wrap = F, defaultPageSize = 12)
+  print(n = 12)
 ```
 
-<div id="htmlwidget-21c3c8093649e8dea1c2" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-21c3c8093649e8dea1c2">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"month":["2020-01-01","2020-02-01","2020-03-01","2020-04-01","2020-05-01","2020-06-01","2020-07-01","2020-08-01","2020-09-01","2020-10-01","2020-11-01","2020-12-01"],"anon_ID":[610,610,610,610,610,610,610,610,610,610,610,610],"num_svcs_used":[0,0,0,0,1,1,1,0,0,0,0,0],"lookback_mean_2mo":[0,0,0,0,0.5,1,1,0.5,0,0,0,0],"lookback_mean_3mo":[0.33,0,0,0,0.33,0.67,1,0.67,0.33,0,0,0],"active_client_2mo":[0,0,0,0,0,1,1,0,0,0,0,0],"active_client_3mo":[0,0,0,0,0,0,1,0,0,0,0,0],"active_client_2mo_relaxed":[0,0,0,0,1,1,1,1,0,0,0,0],"active_client_3mo_relaxed":[0,0,0,0,0,1,1,1,0,0,0,0],"active_client_3mo_extra_relaxed":[1,0,0,0,1,1,1,1,1,0,0,0]},"columns":[{"accessor":"month","name":"month","type":"Date"},{"accessor":"anon_ID","name":"anon_ID","type":"numeric"},{"accessor":"num_svcs_used","name":"num_svcs_used","type":"numeric"},{"accessor":"lookback_mean_2mo","name":"lookback_mean_2mo","type":"numeric"},{"accessor":"lookback_mean_3mo","name":"lookback_mean_3mo","type":"numeric"},{"accessor":"active_client_2mo","name":"active_client_2mo","type":"numeric"},{"accessor":"active_client_3mo","name":"active_client_3mo","type":"numeric"},{"accessor":"active_client_2mo_relaxed","name":"active_client_2mo_relaxed","type":"numeric"},{"accessor":"active_client_3mo_relaxed","name":"active_client_3mo_relaxed","type":"numeric"},{"accessor":"active_client_3mo_extra_relaxed","name":"active_client_3mo_extra_relaxed","type":"numeric"}],"resizable":true,"defaultPageSize":12,"paginationType":"numbers","showPageInfo":true,"minRows":1,"nowrap":true,"dataKey":"6465996318cd678c61d774de1e20ee3b","key":"6465996318cd678c61d774de1e20ee3b"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+    ## # A tibble: 12 × 10
+    ##    month      anon_ID num_svcs_used lookback_mean_2mo lookback_mean_3mo
+    ##    <date>       <dbl>         <dbl>             <dbl>             <dbl>
+    ##  1 2020-01-01     610             0               0                0.33
+    ##  2 2020-02-01     610             0               0                0   
+    ##  3 2020-03-01     610             0               0                0   
+    ##  4 2020-04-01     610             0               0                0   
+    ##  5 2020-05-01     610             1               0.5              0.33
+    ##  6 2020-06-01     610             1               1                0.67
+    ##  7 2020-07-01     610             1               1                1   
+    ##  8 2020-08-01     610             0               0.5              0.67
+    ##  9 2020-09-01     610             0               0                0.33
+    ## 10 2020-10-01     610             0               0                0   
+    ## 11 2020-11-01     610             0               0                0   
+    ## 12 2020-12-01     610             0               0                0   
+    ## # … with 5 more variables: active_client_2mo <dbl>, active_client_3mo <dbl>,
+    ## #   active_client_2mo_relaxed <dbl>, active_client_3mo_relaxed <dbl>,
+    ## #   active_client_3mo_extra_relaxed <dbl>
+
+``` r
+  # reactable::reactable(resizable = T, wrap = F, defaultPageSize = 12)
+```
 
 On the other hand, client 210 was an active client each month in 2020 no
 matter which metric is used:
@@ -444,11 +464,31 @@ active_clients %>%
          month <= "2020-12-31") %>%
   select(month, anon_ID, num_svcs_used, starts_with("lookback"), starts_with("active")) %>%
   select(-active_period) %>% 
-  reactable::reactable(resizable = T, wrap = F, defaultPageSize = 12)
+  print(n = 12)
 ```
 
-<div id="htmlwidget-82be4dd43ffbdee54065" class="reactable html-widget" style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-82be4dd43ffbdee54065">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"month":["2020-01-01","2020-02-01","2020-03-01","2020-04-01","2020-05-01","2020-06-01","2020-07-01","2020-08-01","2020-09-01","2020-10-01","2020-11-01","2020-12-01"],"anon_ID":[210,210,210,210,210,210,210,210,210,210,210,210],"num_svcs_used":[1,3,3,2,2,2,1,2,1,2,2,2],"lookback_mean_2mo":[2,2,3,2.5,2,2,1.5,1.5,1.5,1.5,2,2],"lookback_mean_3mo":[2.33,2.33,2.33,2.67,2.33,2,1.67,1.67,1.33,1.67,1.67,2],"active_client_2mo":[1,1,1,1,1,1,1,1,1,1,1,1],"active_client_3mo":[1,1,1,1,1,1,1,1,1,1,1,1],"active_client_2mo_relaxed":[1,1,1,1,1,1,1,1,1,1,1,1],"active_client_3mo_relaxed":[1,1,1,1,1,1,1,1,1,1,1,1],"active_client_3mo_extra_relaxed":[1,1,1,1,1,1,1,1,1,1,1,1]},"columns":[{"accessor":"month","name":"month","type":"Date"},{"accessor":"anon_ID","name":"anon_ID","type":"numeric"},{"accessor":"num_svcs_used","name":"num_svcs_used","type":"numeric"},{"accessor":"lookback_mean_2mo","name":"lookback_mean_2mo","type":"numeric"},{"accessor":"lookback_mean_3mo","name":"lookback_mean_3mo","type":"numeric"},{"accessor":"active_client_2mo","name":"active_client_2mo","type":"numeric"},{"accessor":"active_client_3mo","name":"active_client_3mo","type":"numeric"},{"accessor":"active_client_2mo_relaxed","name":"active_client_2mo_relaxed","type":"numeric"},{"accessor":"active_client_3mo_relaxed","name":"active_client_3mo_relaxed","type":"numeric"},{"accessor":"active_client_3mo_extra_relaxed","name":"active_client_3mo_extra_relaxed","type":"numeric"}],"resizable":true,"defaultPageSize":12,"paginationType":"numbers","showPageInfo":true,"minRows":1,"nowrap":true,"dataKey":"a6f07e387eb62a01671662a11bc000f4","key":"a6f07e387eb62a01671662a11bc000f4"},"children":[]},"class":"reactR_markup"},"evals":[],"jsHooks":[]}</script>
+    ## # A tibble: 12 × 10
+    ##    month      anon_ID num_svcs_used lookback_mean_2mo lookback_mean_3mo
+    ##    <date>       <dbl>         <dbl>             <dbl>             <dbl>
+    ##  1 2020-01-01     210             1               2                2.33
+    ##  2 2020-02-01     210             3               2                2.33
+    ##  3 2020-03-01     210             3               3                2.33
+    ##  4 2020-04-01     210             2               2.5              2.67
+    ##  5 2020-05-01     210             2               2                2.33
+    ##  6 2020-06-01     210             2               2                2   
+    ##  7 2020-07-01     210             1               1.5              1.67
+    ##  8 2020-08-01     210             2               1.5              1.67
+    ##  9 2020-09-01     210             1               1.5              1.33
+    ## 10 2020-10-01     210             2               1.5              1.67
+    ## 11 2020-11-01     210             2               2                1.67
+    ## 12 2020-12-01     210             2               2                2   
+    ## # … with 5 more variables: active_client_2mo <dbl>, active_client_3mo <dbl>,
+    ## #   active_client_2mo_relaxed <dbl>, active_client_3mo_relaxed <dbl>,
+    ## #   active_client_3mo_extra_relaxed <dbl>
+
+``` r
+  # reactable::reactable(resizable = T, wrap = F, defaultPageSize = 12)
+```
 
 Plotting the different measure of active clients shows the effect of
 relaxing the definition allows more clients to fall into the ‘active’
