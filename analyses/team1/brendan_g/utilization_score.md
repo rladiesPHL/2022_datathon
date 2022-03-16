@@ -1,4 +1,4 @@
-ElderNet Utilziation Working Doc
+ElderNet Utiliziation Working Doc
 ================
 
 ``` r
@@ -518,6 +518,9 @@ active_clients %>%
 
 ![](utilization_score_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
 
+> Takeaway #1: Around March 2021, monthly active clients started to
+> increase after the impact of the pandemic
+
 taking into account poverty status and minority status shows how active
 clients with `poverty = yes`and `minority = yes` showed almost no change
 through the pandemic. This is illustrative of how the ElderNet serves
@@ -539,6 +542,11 @@ active_clients %>%
 ```
 
 ![](utilization_score_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+
+> Takeaway #2: The impact of the pandemic on service utilization is
+> almost non-existant for minority clients with popverty status = ‘Yes’.
+> This illustrates the lifeline ElderNet is for this client subgroup
+> since thre was almost no interruption in services utilized.
 
 #### other ways to measure utilization
 
@@ -565,6 +573,9 @@ monthly_util %>%
 
 ![](utilization_score_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
 
+> Takeaway #3: While pantry and volunteer services encounters have
+> rebounded since the pandemic, care management encounters have not
+
 It appears that volunteer encounters for minority clients is not
 recovering the same as non-minority clients after the shock of the
 pandemic.
@@ -586,6 +597,9 @@ monthly_util %>%
 ```
 
 ![](utilization_score_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
+
+> Takeaway #4: Volunteer services has not rebounded for minority clients
+> as much as for non minority clients
 
 It does seem like ElderNet was able to successfully transition to remote
 contact when the pandemic hit:
