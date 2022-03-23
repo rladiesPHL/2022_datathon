@@ -27,9 +27,10 @@
   * [Mar 9](https://docs.google.com/document/d/12Sr3i_Aau7c7-Xu0TERDo6O4WxbccsVg1glciO-IpMo/edit)
   * [Mar 14](https://docs.google.com/document/d/18fI28E_yeppQS9t7veOqV9SYQsTQxp2YZnKgPx2zHSI/edit)
   
-#### Draft slides
+#### Slides
 
-[Google Slides](https://docs.google.com/presentation/d/1A8mSQaEX6KNZHjmIsThHWsKHYGVFWFWqCsh1zKU1Tak/edit#slide=id.p)
+  * [Team 1 Slides](https://docs.google.com/presentation/d/1A8mSQaEX6KNZHjmIsThHWsKHYGVFWFWqCsh1zKU1Tak/edit#slide=id.p)  
+  * [DataThon 2022 Combined Slides](https://docs.google.com/presentation/d/1dq-cISACV6U02x6YDP9NM8rPVINqXQeTU6zP5V4k8Ww/edit#slide=id.gba4bff656c_0_62)  
 
 ### Contributing Code
 

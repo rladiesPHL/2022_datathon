@@ -165,6 +165,23 @@ care_mgmt_util <-
             total_care_mgmt_mins = sum(amount, na.rm = T),
             mean_care_mgmt_mins = mean(amount, na.rm = T))
 
+care_mgmt %>%
+  mutate(month = as.Date(floor_date(assistance_date, 'month'))) %>%
+  group_by(month) %>%
+  summarise(tot_encoutners = n()) %>%
+  mutate(type = "Care Management") %>%
+  filter(month < max(month)) %>%
+  ggplot(., aes(x = month, y = tot_encoutners)) + 
+  geom_line() + 
+  geom_point() + 
+  scale_x_date(breaks = scales::date_breaks("1 month"), date_labels = "%b %y",
+               guide = guide_axis(angle = 45)) + 
+  labs(x = 'month', y ='Care mgmt encounters', title = "Monthly Total Care Management Encounters")
+```
+
+![](utilization_score_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+
+``` r
 #example output for client 210
 care_mgmt_util %>% 
   filter(anon_ID == "210")
@@ -197,6 +214,22 @@ pantry_util <-
             total_pantry_pounds = sum(amount, na.rm = T),
             mean_pantry_pounds = mean(amount, na.rm = T))
 
+pantry %>%
+  mutate(month = as.Date(floor_date(mdy_hm(assistance_date), 'month'))) %>%
+  group_by(month) %>%
+  summarise(total_pantry_encounters = n())  %>%
+  filter(month < max(month)) %>%
+  ggplot(., aes(x = month, y = total_pantry_encounters)) + 
+  geom_line() + 
+  geom_point() + 
+  scale_x_date(breaks = scales::date_breaks("1 month"), date_labels = "%b %y",
+               guide = guide_axis(angle = 45)) + 
+  labs(x = 'month', y ='Pantry encounters', title = "Monthly Total Pantry Encounters")
+```
+
+![](utilization_score_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+
+``` r
 #example output for client 210
 pantry_util %>% 
   filter(anon_ID == "210")
@@ -229,6 +262,22 @@ volunteer_util <-
             total_volunteer_mins = sum(appt_duration, na.rm = T),
             mean_volunteer_mins = mean(appt_duration, na.rm = T))
 
+volunteer %>%
+  mutate(month = as.Date(floor_date(mdy(appt_date), 'month'))) %>% 
+  group_by(month) %>%
+  summarise(total = n()) %>%
+  filter(month < max(month)) %>%
+  ggplot(., aes(x = month, y = total)) + 
+  geom_line() + 
+  geom_point() + 
+  scale_x_date(breaks = scales::date_breaks("1 month"), date_labels = "%b %y",
+               guide = guide_axis(angle = 45)) + 
+  labs(x = 'month', y ='Volunteer encounters', title = "Monthly Total Volunteer Encounters")
+```
+
+![](utilization_score_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+
+``` r
 #example output for client 210
 volunteer_util %>% 
   filter(anon_ID == "210")
@@ -253,6 +302,46 @@ volunteer_util %>%
     ## 13     210 2020-02-01                     1               1.75              1.75
     ## 14     210 2020-03-01                     2               3.25              1.62
 
+``` r
+cols <- 
+  c("#2F3D4B",
+    "#5D5177",
+    "410A45")
+
+data <- 
+  bind_rows(
+  care_mgmt %>%
+    mutate(month = as.Date(floor_date(assistance_date, 'month'))) %>%
+    group_by(month) %>%
+    summarise(tot_encoutners = n()) %>%
+    mutate(type = "Care Management Svcs"),
+  
+  pantry %>%
+    mutate(month = as.Date(floor_date(mdy_hm(assistance_date), 'month'))) %>%
+    group_by(month) %>%
+    summarise(tot_encoutners = n()) %>%
+    mutate(type = "Pantry"),
+  
+  volunteer %>%
+    mutate(month = as.Date(floor_date(mdy(appt_date), 'month'))) %>% 
+    group_by(month) %>%
+    summarise(tot_encoutners = n()) %>%
+    mutate(type = "Volunteer Svcs")) %>%
+  filter(month < max(month))
+
+data %>%
+  ggplot(., aes(x = month, y = tot_encoutners, color = type)) +
+  geom_line(aes(color = type)) +
+  geom_point(aes(color = type)) +
+  # scale_colour_manual(values = c("#2F3D4B",
+  #                                "#5D5177",
+  #                                "410A45")) %>%
+  scale_x_date(breaks = scales::date_breaks("1 month"), date_labels = "%b %y",
+               guide = guide_axis(angle = 45)) + 
+  labs(x = '', y ='Encounters', title = "Monthly ElderNet Service Utilziation", color = "Service Type")
+```
+
+![](utilization_score_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 ### get utilziation
 
 Here all datasets are joined together and then services used for each
@@ -516,7 +605,30 @@ active_clients %>%
   labs(x = 'Month', y = 'Active Clients', color = 'Metric', title = 'Montly Active Clients Across Definition Types')
 ```
 
-![](utilization_score_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+![](utilization_score_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+
+``` r
+active_clients %>%
+  ungroup() %>%
+  group_by(month) %>%
+  summarise(`2 month strict` = sum(active_client_2mo),
+            `3 month strict` = sum(active_client_3mo),
+            `2 month relaxed`= sum(active_client_2mo_relaxed),
+            `3 month relaxed` = sum(active_client_3mo_relaxed),
+            `3 month extra relaxed` = sum(active_client_3mo_extra_relaxed),
+            ) %>% 
+  pivot_longer(2:6) %>%
+  filter(name == "2 month relaxed") %>%
+  # mutate(category = ifelse(name %in% c("2 month strict", '3 month strict'), 'Strict Definition', "Relaxed Definition")) %>%
+  filter(month < max(month)) %>%
+  ggplot(., aes(x = month, y = value)) + 
+  geom_point(color = "#5D5177") + 
+  geom_line(color = "#5D5177") + 
+  labs(x = 'month', y = "Count", title = 'Active Clients per Month') + 
+  labs(x = 'Month', y = 'Active Clients', title = 'Monthly Active Clients')
+```
+
+![](utilization_score_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
 
 > Takeaway #1: Around March 2021, monthly active clients started to
 > increase after the impact of the pandemic
@@ -533,7 +645,7 @@ active_clients %>%
          minority_label = ifelse(minority == "Yes", "Minority: Yes", "Minority: No")) %>%
   filter(month < max(month)) %>%
   group_by(month, poverty_label, minority_label) %>%
-  summarise(active_clients = sum(active_client_3mo)) %>%
+  summarise(active_clients = sum(active_client_2mo_relaxed)) %>%
   ggplot(., aes(x = month, y = active_clients, color = poverty_label)) + 
   geom_point() + 
   geom_line() + 
@@ -541,10 +653,10 @@ active_clients %>%
   labs(x = 'month', y = "Count", title = 'Active Clients per Month', color = NULL)
 ```
 
-![](utilization_score_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+![](utilization_score_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
 
 > Takeaway #2: The impact of the pandemic on service utilization is
-> almost non-existant for minority clients with popverty status = ‘Yes’.
+> almost non-existant for minority clients with poverty status = ‘Yes’.
 > This illustrates the lifeline ElderNet is for this client subgroup
 > since thre was almost no interruption in services utilized.
 
@@ -571,7 +683,7 @@ monthly_util %>%
   labs(x = "month", y = "Total monthly encounters", title = " Encounters by service")
 ```
 
-![](utilization_score_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
+![](utilization_score_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
 
 > Takeaway #3: While pantry and volunteer services encounters have
 > rebounded since the pandemic, care management encounters have not
@@ -596,7 +708,7 @@ monthly_util %>%
   labs(x = "month", y = "Total monthly encounters", title = " Encounters by service and minority status")
 ```
 
-![](utilization_score_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
+![](utilization_score_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
 
 > Takeaway #4: Volunteer services has not rebounded for minority clients
 > as much as for non minority clients
@@ -628,4 +740,4 @@ client_info %>%
   labs(x = "month", y = "monthly encounters", title = "Care mgmt encounters by service")
 ```
 
-![](utilization_score_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
+![](utilization_score_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
