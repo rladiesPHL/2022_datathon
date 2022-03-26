@@ -287,4 +287,40 @@ tm_shape(mont_race_minority,
             fontfamily = "Verdana")
 
 
+#LIVING ARRANGEMENTS OF ADULTS 18 YEARS AND OVER BY AGE
 
+age_living_arrange <- v20 %>% 
+  filter(str_detect(concept, "LIVING ARRANGEMENTS OF ADULTS 18 YEARS AND OVER BY AGE"))
+
+mont_over65 <- get_acs(
+  geography = "tract",
+  state = "PA",
+  county = "Montgomery",
+  variables = "B09021_022",
+  summary_var = "B09021_001",
+  geometry = TRUE
+) %>%
+  mutate(percent = 100 * (estimate / summary_est))
+
+mont_over65_alone <- get_acs(
+  geography = "tract",
+  state = "PA",
+  county = "Montgomery",
+  variables = "B09021_023",
+  summary_var = "B09021_022",
+  geometry = TRUE
+) %>%
+  mutate(percent = 100 * (estimate / summary_est))
+
+
+tm_shape(mont_over65) +
+  tm_polygons(col = "percent",
+              title = "Proportion of householders over 65") +
+  tm_layout(frame = FALSE,
+            legend.outside = TRUE)
+
+tm_shape(mont_over65_alone) +
+  tm_polygons(col = "percent",
+              title = "Proportion of over 65s living alone") +
+  tm_layout(frame = FALSE,
+            legend.outside = TRUE)
