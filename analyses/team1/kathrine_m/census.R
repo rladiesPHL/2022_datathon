@@ -1,5 +1,6 @@
 library(tidycensus)
 library(tidyverse)
+library(forcats)
 
 census_api_key("d9bef09add5d3e76117f317656827bdeb4dab133")
 
@@ -33,6 +34,10 @@ unique(v20_pov$concept)
 # POVERTY STATUS IN THE PAST 12 MONTHS BY AGE
 # B17020_001
 # This is total income below poverty level by age group
+
+v20_pov %>% 
+  filter(name == "B17020_001")
+
 age_vars <- c("below_60-74" = "B17020_007",
               "at_above_60-74" = "B17020_015",
               "below_75-84" = "B17020_008",
@@ -47,7 +52,39 @@ age_pov %>%
   ggplot(aes(fill = estimate)) +
   geom_sf() + facet_wrap(~variable)
 
+
+
 # This is not actually helpful, the counts are too low
+
+##### POVERTY LEVEL"#####
+
+# Instead can I create a new variable to code above Vs below?
+
+
+mont_pov <- get_acs(
+  geography = "county",
+  state = "PA",
+  county = "Montgomery",
+  variables = c("below" = "B17020_002",
+                "at_above" = "B17020_010"),
+  summary_var = "B17020_001",
+  geometry = TRUE
+) %>%
+  mutate(percent = 100 * (estimate / summary_est))
+
+
+
+mont_TEST <- get_estimates(
+  geography = "county",
+  product = "population",
+  breakdown_labels = TRUE,
+  state = "PA",
+  county = "Montgomery",
+  year = 2019
+)
+
+
+
 
 # Taking an example from th resources
 demvars <- c(White = "P1_003N",
@@ -118,8 +155,13 @@ race_pie <- mont_race[2:7,] %>%
 
 # ggsave("montgomery_race_demographics.png", race_pie,
 #        device = "png", width = 6, height = 4, units = "in")
+
+
+
+
+
   
-# donut
+ # donut
 hsize <- 3
 
 mont_race[2:7,] %>% 
@@ -324,3 +366,99 @@ tm_shape(mont_over65_alone) +
               title = "Proportion of over 65s living alone") +
   tm_layout(frame = FALSE,
             legend.outside = TRUE)
+
+
+##### PLOTS FOR DECK #####
+
+# let's try just minority / non-minority
+
+
+minority_pie_stylized <- mont_race[2:7,] %>% 
+  mutate(race2 = case_when(RACE != "White alone" ~ "Minority",
+                           TRUE ~ "Non-minority"),
+         pct = round(value/sum(value)*100,1)) %>% 
+  group_by(race2) %>% 
+  summarise(pct = sum(pct)) %>% 
+  ggplot(aes(x = "", y = pct, fill = race2)) +
+  geom_bar(color = "black", stat = "identity") +
+  geom_text(aes(x = 1.1, label = paste(pct,"%", sep = ""), color = race2),
+            position = position_stack(vjust = 0.5),
+            size = 4) +
+  scale_fill_manual(values = c("#c6b5c7", "#410A45")) +
+  scale_color_manual(values = c("#410A45", "#c6b5c7")) +
+  labs(title = "Minority Status of Montgomery County Residents",
+       subtitle = "Data source: US Census Bureau population estimates & tidycensus R package",
+       fill = NULL) +
+  coord_polar(theta = "y") +
+  guides(color = "none") +
+  theme_void() +
+  theme(legend.text = element_text(size = 16),
+        plot.title = element_text(size = 16),
+        plot.subtitle = element_text(size = 12))
+
+ggsave("analyses/team1/kathrine_m/images/montgomery_minority_status.png",
+       minority_pie_stylized, device = "png",
+       width = 7, height = 4, units = "in")
+
+
+# Looking at income/poverty status
+
+poverty_pie_stylized <- mont_pov %>% 
+  mutate(pct = round(estimate/summary_est*100,1)) %>% 
+  ggplot(aes(x = "", y = pct, fill = fct_relevel(variable, "below", "at_above"))) +
+  geom_bar(color = "black", stat = "identity") +
+  geom_text(aes(x = 1.3, label = paste(pct,"%", sep = ""),
+                color = fct_relevel(variable, "below", "at_above")),
+            position = position_stack(vjust = 0.5),
+            size = 4) +
+  scale_fill_manual(values = c("#c6b5c7", "#410A45"),
+                    labels = c("Below Poverty Level",
+                               "At/Above Poverty Level")) +
+  scale_color_manual(values = c("#410A45", "#c6b5c7")) +
+  labs(title = "Poverty Status of Montgomery County Residents",
+       subtitle = "Data source: US Census Bureau population estimates & tidycensus R package",
+       fill = NULL) +
+  coord_polar(theta = "y") +
+  guides(color = "none") +
+  theme_void() +
+  theme(legend.text = element_text(size = 16),
+        plot.title = element_text(size = 16),
+        plot.subtitle = element_text(size = 12))
+
+ggsave("analyses/team1/kathrine_m/images/montgomery_poverty_status.png",
+       poverty_pie_stylized, device = "png",
+       width = 7, height = 4, units = "in")
+
+
+
+##### NOT WORKING #####
+# # Microdata
+# # see the PUMAs for PA
+# 
+# library(tigris)
+# options(tigris_use_cache = TRUE)
+# 
+# pa_pumas <- pumas(state = "PA", cb = TRUE, year = 2019)
+# 
+# ggplot(pa_pumas) + 
+#   geom_sf() + 
+#   theme_void()
+# 
+# pa_pumas$NAME10
+# # Montgomery County (Southwest)--King of Prussia & Ardmore (East) = 03103
+# 
+# pa_puma_subset <- get_pums(
+#   variables = "AGEP",
+#   state = "PA",
+#   survey = "acs5",
+#   puma = "03103",
+#   recode = TRUE
+# )
+# 
+# View(pums_variables)
+# 
+# 
+# pa_puma_subset %>%
+#   filter(AGEP >= 65) %>%
+#   count(wt = PWGTP)
+# 
