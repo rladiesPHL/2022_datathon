@@ -210,42 +210,46 @@ volunteer_util %>%
 ```{r}
 
 cols <- 
-  c("#2F3D4B",
-    "#5D5177",
-    "410A45")
+  c("#2F3D4B", # purple
+    "#b6cf93", # green
+    "#847cd4" # lighter purple
+    )
 
 data <- 
   bind_rows(
-  care_mgmt %>%
-    mutate(month = as.Date(floor_date(assistance_date, 'month'))) %>%
-    group_by(month) %>%
-    summarise(tot_encoutners = n()) %>%
-    mutate(type = "Care Management Svcs"),
-  
-  pantry %>%
-    mutate(month = as.Date(floor_date(mdy_hm(assistance_date), 'month'))) %>%
-    group_by(month) %>%
-    summarise(tot_encoutners = n()) %>%
-    mutate(type = "Pantry"),
-  
-  volunteer %>%
-    mutate(month = as.Date(floor_date(mdy(appt_date), 'month'))) %>% 
-    group_by(month) %>%
-    summarise(tot_encoutners = n()) %>%
-    mutate(type = "Volunteer Svcs")) %>%
+    care_mgmt %>%
+      mutate(month = as.Date(floor_date(assistance_date, 'month'))) %>%
+      group_by(month) %>%
+      summarise(tot_encoutners = n()) %>%
+      mutate(type = "Care Management Svcs"),
+    
+    pantry %>%
+      mutate(month = as.Date(floor_date(mdy_hm(assistance_date), 'month'))) %>%
+      group_by(month) %>%
+      summarise(tot_encoutners = n()) %>%
+      mutate(type = "Pantry"),
+    
+    volunteer %>%
+      mutate(month = as.Date(floor_date(mdy(appt_date), 'month'))) %>% 
+      group_by(month) %>%
+      summarise(tot_encoutners = n()) %>%
+      mutate(type = "Volunteer Svcs")
+  ) %>%
   filter(month < max(month))
 
 data %>%
-  ggplot(., aes(x = month, y = tot_encoutners, color = type)) +
-  geom_line(aes(color = type)) +
-  geom_point(aes(color = type)) +
-  # scale_colour_manual(values = c("#2F3D4B",
-  #                                "#5D5177",
-  #                                "410A45")) %>%
-  scale_x_date(breaks = scales::date_breaks("1 month"), date_labels = "%b %y",
-               guide = guide_axis(angle = 45)) + 
-  labs(x = '', y ='Encounters', title = "Monthly ElderNet Service Utilziation", color = "Service Type")
-  
+  ggplot(.) +
+  geom_line(aes(x = month, y = tot_encoutners, color = type)) +
+  geom_point(aes(x = month, y = tot_encoutners, color = type)) +
+  scale_color_manual(values =cols) +
+  scale_x_date(breaks = scales::date_breaks("3 month"), date_labels = "%b %y",
+               guide = guide_axis(angle = 45)) +
+  labs(x = '', y ='Encounters', title = "Monthly ElderNet Service Utilziation", color = "Service Type") + 
+  theme(text = element_text(size=20)) + 
+  geom_vline(xintercept = as.Date("2020-03-06"), linetype = 'dashed', color = '#2F3D4B') +
+  annotate("text", x = as.Date("2020-08-01"), y = 625, label = "1st PA Covid case reported")
+
+
 ```
 ### get utilziation
 
@@ -448,7 +452,8 @@ active_clients %>%
   geom_point(color = "#5D5177") + 
   geom_line(color = "#5D5177") + 
   labs(x = 'month', y = "Count", title = 'Active Clients per Month') + 
-  labs(x = 'Month', y = 'Active Clients', title = 'Monthly Active Clients')
+  labs(x = 'Month', y = 'Active Clients', title = 'Monthly Active Clients') + 
+  theme(text = element_text(size=20))
 ```
 
 
@@ -470,7 +475,11 @@ active_clients %>%
   geom_point() + 
   geom_line() + 
   facet_wrap(vars(minority_label)) + 
-  labs(x = 'month', y = "Count", title = 'Active Clients per Month', color = NULL)
+  scale_color_manual(values = c("#2F3D4B", "#847cd4")) + 
+  scale_x_date(breaks = scales::date_breaks("6 month"), date_labels = "%b %Y",
+               guide = guide_axis(angle = 45)) +
+  labs(x = 'Month', y = "Count", title = 'Active Clients per Month', color = NULL)+ 
+  theme(text = element_text(size=20))
 
 ```   
 
