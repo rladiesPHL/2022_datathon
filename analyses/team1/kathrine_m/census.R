@@ -2,9 +2,9 @@ library(tidycensus)
 library(tidyverse)
 library(forcats)
 
-census_api_key("d9bef09add5d3e76117f317656827bdeb4dab133")
+# census_api_key("YOUR KEY GOES HERE", install = TRUE)
 
-test <- get_acs(geography = "tract", variables = "B17020_001",
+test <- get_acs(geography = "county subdivision", variables = "B17020_001",
                 state = "PA", county = "Montgomery", geometry = TRUE, year = 2020)
 
 ggplot(test, aes(fill = estimate, color = estimate)) +
@@ -294,19 +294,19 @@ library(tmap)
 
 # Look at percent minority and non-minority on the map
 # possibly missing variables here, needs work
-mont_race <- get_acs(
-  geography = "tract",
-  state = "PA",
-  county = "Montgomery",
-  variables = c(White = "B03002_003",
-                Black = "B03002_004",
-                Native = "B03002_005",
-                Asian = "B03002_006",
-                Hispanic = "B03002_012"),
-  summary_var = "B03002_001",
-  geometry = TRUE
-) %>%
-  mutate(percent = 100 * (estimate / summary_est))
+# mont_race <- get_acs(
+#   geography = "tract",
+#   state = "PA",
+#   county = "Montgomery",
+#   variables = c(White = "B03002_003",
+#                 Black = "B03002_004",
+#                 Native = "B03002_005",
+#                 Asian = "B03002_006",
+#                 Hispanic = "B03002_012"),
+#   summary_var = "B03002_001",
+#   geometry = TRUE
+# ) %>%
+#   mutate(percent = 100 * (estimate / summary_est))
 
 mont_race_nonminority <- filter(mont_race, variable == "White")
 tm_shape(mont_race_nonminority) +
@@ -387,12 +387,13 @@ minority_pie_stylized <- mont_race[2:7,] %>%
   scale_fill_manual(values = c("#c6b5c7", "#410A45")) +
   scale_color_manual(values = c("#410A45", "#c6b5c7")) +
   labs(title = "Minority Status of Montgomery County Residents",
-       subtitle = "Data source: US Census Bureau population estimates & tidycensus R package",
+       subtitle = "Data source: US Census Bureau population estimates, 2019",
        fill = NULL) +
   coord_polar(theta = "y") +
   guides(color = "none") +
   theme_void() +
   theme(legend.text = element_text(size = 16),
+        legend.position = c(1.2, 0.20),
         plot.title = element_text(size = 16),
         plot.subtitle = element_text(size = 12))
 
@@ -404,7 +405,7 @@ ggsave("analyses/team1/kathrine_m/images/montgomery_minority_status.png",
 # Looking at income/poverty status
 
 poverty_pie_stylized <- mont_pov %>% 
-  mutate(pct = round(estimate/summary_est*100,1)) %>% 
+  mutate(pct = round(sum(estimate)/summary_est*100,1)) %>% 
   ggplot(aes(x = "", y = pct, fill = fct_relevel(variable, "below", "at_above"))) +
   geom_bar(color = "black", stat = "identity") +
   geom_text(aes(x = 1.3, label = paste(pct,"%", sep = ""),
@@ -416,12 +417,13 @@ poverty_pie_stylized <- mont_pov %>%
                                "At/Above Poverty Level")) +
   scale_color_manual(values = c("#410A45", "#c6b5c7")) +
   labs(title = "Poverty Status of Montgomery County Residents",
-       subtitle = "Data source: US Census Bureau population estimates & tidycensus R package",
+       subtitle = "Data source: US Census Bureau population estimates, 2019",
        fill = NULL) +
   coord_polar(theta = "y") +
   guides(color = "none") +
   theme_void() +
   theme(legend.text = element_text(size = 16),
+        legend.position = c(1.2, 0.2),
         plot.title = element_text(size = 16),
         plot.subtitle = element_text(size = 12))
 
@@ -462,3 +464,4 @@ ggsave("analyses/team1/kathrine_m/images/montgomery_poverty_status.png",
 #   filter(AGEP >= 65) %>%
 #   count(wt = PWGTP)
 # 
+#
