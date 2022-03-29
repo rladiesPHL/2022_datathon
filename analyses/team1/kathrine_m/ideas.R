@@ -105,3 +105,94 @@ mont_age <- get_estimates(
   year = 2019
 )
 
+##### Carl's data #####
+
+# Recreate Car's data with just the percentages
+# This let's us harmonize the formatting but is not ideal
+
+carl_poverty <- data.frame(c("Poverty", "No Poverty"), c(64,36)) %>% 
+  rename(variable = 1, pct = 2)
+  
+
+eldernet_poverty_pie <- carl_poverty %>%  
+  ggplot(aes(x = "", y = pct, fill = variable)) +
+  geom_bar(color = "black", stat = "identity") +
+  geom_text(aes(x = 1.3, label = paste(pct,"%", sep = ""),
+                color = variable),
+            position = position_stack(vjust = 0.5),
+            size = 4) +
+  scale_fill_manual(values = c("#c6b5c7", "#410A45"),
+                    labels = c("Poverty",
+                               "No poverty")) +
+  scale_color_manual(values = c("#410A45", "#c6b5c7")) +
+  labs(title = "Poverty Status of ElderNet Clients",
+       subtitle = "Data source: Datathon 2022",
+       fill = NULL) +
+  coord_polar(theta = "y") +
+  guides(color = "none") +
+  theme_void() +
+  theme(legend.text = element_text(size = 16),
+        legend.position = c(1.1, 0.2),
+        plot.title = element_text(size = 16),
+        plot.subtitle = element_text(size = 12))
+
+ggsave("analyses/team1/kathrine_m/images/eldernet_poverty_pie.png", eldernet_poverty_pie,
+       device = "png", height = 4, width = 6, units = "in")
+
+
+carl_poverty <- data.frame(c("Poverty", "No Poverty"), c(64,36)) %>% 
+  rename(variable = 1, pct = 2)
+
+
+eldernet_poverty_pie <- carl_poverty %>%  
+  ggplot(aes(x = "", y = pct, fill = variable)) +
+  geom_bar(color = "black", stat = "identity") +
+  geom_text(aes(x = 1.3, label = paste(pct,"%", sep = ""),
+                color = variable),
+            position = position_stack(vjust = 0.5),
+            size = 4) +
+  scale_fill_manual(values = c("#c6b5c7", "#410A45")) +
+  scale_color_manual(values = c("#410A45", "#c6b5c7")) +
+  labs(title = "Poverty Status of ElderNet Clients",
+       subtitle = "Data source: Datathon 2022",
+       fill = NULL) +
+  coord_polar(theta = "y") +
+  guides(color = "none") +
+  theme_void() +
+  theme(legend.text = element_text(size = 16),
+        legend.position = c(1.1, 0.2),
+        plot.title = element_text(size = 16),
+        plot.subtitle = element_text(size = 12))
+
+ggsave("analyses/team1/kathrine_m/images/eldernet_poverty_pie.png", eldernet_poverty_pie,
+       device = "png", height = 4, width = 6, units = "in")
+
+carl_minority <- data.frame(c("Minority", "Non-minority"), c(69,31)) %>% 
+  rename(variable = 1, pct = 2)
+
+
+eldernet_minority_pie <- carl_minority %>%  
+  ggplot(aes(x = "", y = pct, fill = variable)) +
+  geom_bar(color = "black", stat = "identity") +
+  geom_text(aes(x = 1.1, label = paste(pct,"%", sep = ""),
+                color = variable),
+            position = position_stack(vjust = 0.5),
+            size = 4) +
+  scale_fill_manual(values = c("#c6b5c7", "#410A45"),
+                    labels = c("Minority",
+                               "Non-minority")) +
+  scale_color_manual(values = c("#410A45", "#c6b5c7")) +
+  labs(title = "Minority Status of ElderNet Clients",
+       subtitle = "Data source: Datathon 2022",
+       fill = NULL) +
+  coord_polar(theta = "y") +
+  guides(color = "none") +
+  theme_void() +
+  theme(legend.text = element_text(size = 16),
+        legend.position = c(1.1, 0.2),
+        plot.title = element_text(size = 16),
+        plot.subtitle = element_text(size = 12))
+
+ggsave("analyses/team1/kathrine_m/images/eldernet_minority_pie.png", eldernet_minority_pie,
+       device = "png", height = 4, width = 6, units = "in")
+
