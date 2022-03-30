@@ -17,6 +17,21 @@ library(here)
 library(tidyr)
 library(stringr)
 
+round_numerics <- 
+  function(data, digits = 2){
+    data %>%
+      mutate(across(where(is.numeric), ~ round(.x, digits)))
+  }
+
+add_table <- 
+  function(data){
+    data %>%
+      round_numerics() %>%
+      reactable::reactable(., fullWidth = F, resizable = T, filterable = T, 
+                           highlight = T, defaultPageSize = 10, wrap = FALSE,
+                           showSortIcon = T, striped = T, compact = T)
+  }
+
 ```
 
 ```{r}
@@ -61,6 +76,12 @@ client_info_adj <-
   group_by(anon_ID) %>%
   padr::pad(group = "anon_ID", interval = "day", start_val = as.Date(global_min), end_val = as.Date(global_max))
 
+# check previous step
+client_info_adj %>%
+  group_by(anon_ID) %>% 
+  tally() %>% 
+  filter(n != 989)
+
 client_info <- 
   client_info %>%
   inner_join(., client_info_adj, "anon_ID") %>%
@@ -68,6 +89,12 @@ client_info <-
   select(-date) %>%
   ungroup() %>%
   distinct()
+
+# check previous step
+client_info %>%
+  group_by(anon_ID) %>% 
+  tally() %>% 
+  filter(n != 33)
 ```
 
 ```{r}
@@ -97,12 +124,12 @@ volunteer_util <-
 
 ```
 
-## Combined utulization plot
+## Combined utilization plot
 
 ```{r}
 cols <- 
   c("#CC79A7", # purple
-    "#CC79A7", # blue
+    "#0072B2", # blue
     "#56B4E9" # lighter blue
     )
 
@@ -130,8 +157,8 @@ data <-
 
 data %>%
   ggplot(.) +
-  geom_line(aes(x = month, y = tot_encoutners, color = type)) +
-  geom_point(aes(x = month, y = tot_encoutners, color = type)) +
+  geom_line(aes(x = month, y = tot_encoutners, color = type), size = 1.5) +
+  geom_point(aes(x = month, y = tot_encoutners, color = type), size = 2.5) +
   scale_color_manual(values =cols) +
   scale_x_date(breaks = scales::date_breaks("3 month"), date_labels = "%b %y",
                guide = guide_axis(angle = 45)) +
@@ -192,6 +219,7 @@ global_min_client_dates <-
   ) %>% 
   mutate(enrollment_month = floor_date(ymd(enrollment_date), "month"))
 
+# trim the utilization dataset to take into account each client's first month. We can remove all rows before each client's first date:
 monthly_util <- 
   monthly_util %>%
   left_join(., global_min_client_dates) %>%
@@ -203,12 +231,8 @@ monthly_util <-
 # get monthly active clients
 
 get_active_clients <-
-  function(data, client, lookback = 2, threshold = 1){
-    # 
-    # client <- 610
-    # data <- monthly_util
-    # lookback <- 2
-
+  function(data, client){
+  
     data %>%
       ungroup() %>%
       filter(anon_ID == {{client}}) %>%
@@ -257,8 +281,8 @@ active_clients %>%
   # mutate(category = ifelse(name %in% c("2 month strict", '3 month strict'), 'Strict Definition', "Relaxed Definition")) %>%
   filter(month < max(month)) %>%
   ggplot(., aes(x = month, y = value)) + 
-  geom_point(color = "#5D5177") + 
-  geom_line(color = "#5D5177") + 
+  geom_point(color = "#5D5177", size = 2.5) + 
+  geom_line(color = "#5D5177", size = 1.5) + 
   labs(x = '', y = 'Active Clients', title = 'Monthly Active Clients') + 
   theme(text = element_text(size=20)) + 
   scale_x_date(breaks = scales::date_breaks("3 month"), date_labels = "%b %Y",
@@ -286,7 +310,7 @@ active_clients %>%
   geom_point() + 
   geom_line() + 
   facet_wrap(vars(minority_label)) + 
-  scale_color_manual(values = c("#2F3D4B", "#847cd4")) + 
+  scale_color_manual(values = c("#CC79A7", "#5D5177")) + 
   scale_x_date(breaks = scales::date_breaks("6 month"), date_labels = "%b %Y",
                guide = guide_axis(angle = 45)) +
   labs(x = '', y = "Count", title = 'Active Clients per Month', color = NULL)+ 
