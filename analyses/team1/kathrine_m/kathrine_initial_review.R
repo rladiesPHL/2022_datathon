@@ -17,16 +17,24 @@ donations <- read_csv("data/donations_anonymized.csv")
 
 
 ##### CLEANING CARE MANAGEMENT #####
+
+# Use glimpse to see each variable and it's class
 glimpse(care_management)
+# Now look at each variable individually 
+# to see if anything needs attention
 
 ##### CLEANING CARE MANAGEMENT: assistance_category #####
+# Which unique values exist in this variable
+# identify any typos/duplications
 unique(care_management$assistance_category)
+# How are the values distributed
+# and are there any NA values?
 table(care_management$assistance_category, useNA = "always")
 # Nothing to fix here
 
 ##### CLEANING CARE MANAGEMENT: Assistance_ #####
-# Let's spend some time cleaning this data:
 
+# There are three Assistance_ variables
 # What do we expect (from the data dictionary):
 # Coordination
 # Continuation
@@ -54,6 +62,7 @@ unique(care_management$Assistance_3)
 # Added to questions
 
 ##### CLEANING CARE MANAGEMENT: Benefit_ #####
+
 # From the data dictionary:
 # ADL
 # ElderNet
@@ -81,6 +90,7 @@ unique(care_management$Benefit_3)
 # What is Support? Is this an assistance value incorrectly logged?
 
 ##### CLEANING CARE MANAGEMENT: CommType #####
+
 # from the data dictionary:
 # Call
 # Email
@@ -95,6 +105,7 @@ unique(care_management$CommType)
 # Looks good
 
 ##### CLEANING CARE MANAGEMENT: InitiatedBy #####
+
 # from the data dictionary:
 # ElderNet
 # Other Party
@@ -136,6 +147,7 @@ unique(care_management$Party)
 # either ElderNet or Care Manager
 # Add to questions
 
+# Now to apply all of the changes outlined above
 
 care_management_clean <- care_management %>% 
         mutate(Assistance_1 = case_when(Assistance_1 == "coordination" ~ "Coordination",
@@ -162,16 +174,17 @@ care_management_clean <- care_management %>%
                                  Party == "Clinet" ~ "Client",
                                  TRUE ~ Party))
 
-write_csv(care_management_clean, "analyses/team1/care_management_anonymized_cleaned.v1.csv")
+# Can write a csv file of this cleaned data
+# but keeo commented out for now
+# write_csv(care_management_clean, "analyses/team1/care_management_anonymized_cleaned.v1.csv")
 
-##### INCOMPLETE: Collapsing Benefit_ and Assistance variables #####
+##### Collapsing Benefit_ and Assistance variables #####
 
 # To combine the benefit and assistance values into one set of variables
 # First split the data frame into lacking the assistance variables
 # and one lacking the benefit variables
 # Then pivoted each to generate an `assistance` or `benefit`
 # variable plus an instance variable to capture the numerical suffix
-
 
 benefit_df <- care_management_clean %>% 
         select(-Assistance_1, -Assistance_2, -Assistance_3) %>% 
@@ -196,12 +209,8 @@ assistance_df <- care_management_clean %>%
 care_management_clean_merge <- benefit_df %>% 
         full_join(., assistance_df)
 
-write_csv(care_management_clean_merge,
-          "analyses/team1/kathrine_m/care_management_clean_merge.csv")
-
 # Quality checks
 # How many ADL entries did we see in the original df?
-
 care_management_clean %>% 
         filter(Benefit_1 == "ADL") %>% nrow() # 124
 care_management_clean %>% 
@@ -209,10 +218,13 @@ care_management_clean %>%
 care_management_clean %>% 
         filter(Benefit_3 == "ADL") %>% nrow() # 5
 124+23+5 # 152
+# And how many in the merged dataset?
 care_management_clean_merge %>% 
-        filter(benefit == "ADL") %>% nrow() # 154
-# Well that's frustrating, where did the two extra come from? 
-# STILL WORKING ON THIS
+        filter(benefit == "ADL") %>% nrow() # 152
+
+# Can now r=write to a csv if needed:
+# write_csv(care_management_clean_merge,
+#           "analyses/team1/kathrine_m/care_management_clean_merge.csv")
 
 
 ##### CLEANING CLIENT INFO #####
@@ -222,21 +234,23 @@ care_management_clean_merge %>%
 
 glimpse(volunteer_services)
 
+# Are there any NAs?
 sum(is.na(volunteer_services$rider_first_ride_date))
 sum(is.na(volunteer_services$rider_last_ride_date))
+# No every client has a first and last ride date recorded
+# What does the number of rides distribution look like?
 summary(volunteer_services$rider_num_rides)
+# Hmm, this variable doesn't seem to be calculated correctly
+# as it is zero across the board
+# Just ignore the variable for now unless we need this metric
 
-# Every client has a first and last ride date recorded
 # How many clients are represented here?
 
 volunteer_services %>% 
         select(anon_ID) %>% 
         unique() %>% 
         nrow()
-
 # Only 162
-
-# However the rider_num_rides variable is set to 0 for everyone, this variable is useless
 
 unique(volunteer_services$category)
 # This matches the data dictionary
@@ -343,19 +357,6 @@ table(donations$target, useNA = "always")
 # Looks good, everything is set to "Gift"
 
 
-##### Dummy DF #####
-# To give an example of what I would like to achieve by merging the assistance and benefit variables:
-
-anon_ID <- c(1,1,1,2,2,2)
-instance <- c(1,2,3)
-assistance <- c("Continuation", "Support", "Referral")
-benefit <- c("Telecommunication", "Financial", "Transportation")
-
-df <- data.frame(anon_ID, instance, assistance, benefit,
-                 row.names = NULL)
-
-print(df)
-
 ##### QUESTIONS #####
 
 # Q1
@@ -371,13 +372,3 @@ print(df)
 # Q2
 # What does "Care Cordinator" refer to in the Party variable?
 # Can this be merged with ElderNet or Care Manager? (N.B. I recoded this to "Other")
-
-# Q3
-# Following on from above observations: Are benefit_1 and assistance_1, e.g. always linked?
-
-# Q4
-# If so, can we merge the three Assistance_ variables? and the three Benefit_ variables?
-# and create another variable e.g. "Interaction" and code 1,2,3 to link 
-# each instance of Assistance and Benefit?
-
-#
