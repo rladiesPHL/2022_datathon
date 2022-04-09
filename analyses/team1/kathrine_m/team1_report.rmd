@@ -48,7 +48,7 @@ There were a large number of missing values in the assistance and benefit catego
 
 Without outcome data for each client, it was not possible to infer which ElderNet services were associated with successfully allowing clients to remain in their homes. Instead, service usage was reviewed in aggregate to highlight those that were most heavily used.
 
-Between [DATE] and [DATE] there were 
+Between [DATE] and [DATE] there were: 
 
 * 21,504 instances of direct care
 * 766 home visits, lasting more than 485 hours
