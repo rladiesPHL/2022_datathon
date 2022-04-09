@@ -96,21 +96,23 @@ activity](https://github.com/brndngrhm/2022_datathon/blob/main/analyses/team1/br
 
 #### How well is ElderNet connecting participants to the public benefits that they need?
 
-**Health/Medical:** Over the same time period, ElderNet provided
-transportation to clients 4,100 times, and the largest share of these
-(2,102, 51%) were for doctors appointments (Figure 2).
+**Health/Medical:** Between April 2015 and December 2021, Eldernet
+volunteers provided services to clients 4,100 times, and the largest
+share of these (2,102, 51%) were transportation to doctors appointments
+(Figure 2).
 
-[Figure 2. Ridership by
-category](CARL%20NEEDS%20TO%20ADD%20THE%20LINK%20TO%20HIS%20BAR%20CHART%20HERE)
+![Figure 2. Volunteer Services by
+Category](https://github.com/brndngrhm/2022_datathon/blob/main/analyses/team1/kathrine_m/images/volunteer_services_plot.png?raw=true)
 
-**Figure 2.** Needs met via ElderNet transportation services
+**Figure 2.** Needs met via ElderNet volunteer services, including
+transportation and home visits
 
-**Food Assistance:** The second largest share of transportation services
-went to shopping, impacting \[NUMBER\] clients a total of \[NUMBER\]
-times. Further, the Pantry service has issued 145,000 lbs of food to
-clients since 2019, with peaks seen around the winter holidays, when
-ElderNet issues holiday baskets and also in the early months of the
-COVID-19 pandemic in 2020 (Figure 2).
+**Food Assistance:** The second largest share of volunteer services went
+to shopping, impacting \[NUMBER\] clients a total of 1158 times.
+Further, the Pantry service has issued 145,000 lbs of food to clients
+since 2019, with peaks seen around the winter holidays, when ElderNet
+issues holiday baskets and also in the early months of the COVID-19
+pandemic in 2020 (Figure 2).
 
 [Figure 3. Pantry
 Usage](WHICH%20PANTRY%20CHART%20ARE%20WE%20USING%20HERE?)
