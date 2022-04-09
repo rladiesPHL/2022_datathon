@@ -11,8 +11,14 @@ Team 1
 
 ### Contributors
 
--   Bulleted List
--   
+-   Troy Bleacher
+-   Gabriel Butler
+-   Brendan Graham
+-   Katarina Gutierrez
+-   Kathrine McAulay
+-   Georgette Nicolaides
+-   Sumner Siebels
+-   Carl Thompson
 
 ### Problem Definition
 
@@ -71,7 +77,7 @@ ElderNet services were associated with successfully allowing clients to
 remain in their homes. Instead, service usage was reviewed in aggregate
 to highlight those that were most heavily used.
 
-Between \[DATE\] and \[DATE\] there were
+Between \[DATE\] and \[DATE\] there were:
 
 -   21,504 instances of direct care
 -   766 home visits, lasting more than 485 hours
@@ -79,7 +85,7 @@ Between \[DATE\] and \[DATE\] there were
 -   145,300 lbs of food issued from the Pantry
 -   2,102 rides to doctor’s appointments
 
-The concept of tracking client activity over time was also exploted and
+The concept of tracking client activity over time was also explored and
 an *Active Client* was defined as a client who had used at least one
 service (volunteer services, pantry, or care management) in at least one
 of the previous two months. This is a lagging indicator and the impact
@@ -87,7 +93,8 @@ of the COVID-19 pandemic can be seen in 2020 and a hopeful uptick in
 service usage following vaccination roll out in early 2021 (Figure 1). A
 limitation of this metric is that it does not take into account the
 intensity of service utilization; however, the inclusion criteria can be
-modified to narrow or widen the window as desired.
+modified to narrow or widen the window as desired. See the Appendix for
+more details about how this metric was created.
 
 ![Figure 1. Client
 activity](https://github.com/brndngrhm/2022_datathon/blob/main/analyses/team1/brendan_g/charts_for_presentation_files/figure-gfm/unnamed-chunk-6-1.png?raw=true)
@@ -145,10 +152,10 @@ red box.
 ### Conclusions
 
 -   Based on typical usage, transportation, especially to doctor’s
-    appointments, is an extremely desired service
--   Access to the food pantry was a consistent and well used service The
-    pandemic impacted monthly active clients, but active clients began
-    to rise following vaccine roll out
+    appointments, is an extremely desired service  
+-   Access to the food pantry was a consistent and well used service  
+-   The pandemic impacted monthly active clients, but active clients
+    began to rise following vaccine roll out  
 -   Linking this information to the current in-home status of clients
     would allow provide more insight into the effectiveness of these
     services
@@ -168,3 +175,59 @@ red box.
 ### References
 
 \[KM TO ADD REFERENCES FOR CENSUS DATA\]
+
+### Appendix
+
+#### Active Client Details
+
+Not every client has an interaction with *each* service *each* month.
+For example, a client may use volunteer services in January, then 2
+months later visit the pantry leaving a gap in their utilization. To get
+a “tidy” dataset where we have 1 row per client per month, we created a
+‘master calendar’ for each client, starting from the first date in the
+data set and ending at the last date. Then we adjust this for the date
+of each client’s first interaction. Prepping the data this way will
+allow us to join the care management, pantry and volunteer data to the
+client data for each client for each month, which will preserve
+instances where a client had 0 interactions in a given month.
+
+Once the data is prepped we can define a process to categorize a client
+as active or not. The process is as follows:
+
+-   for each client for each month, calculate the number of ElderNet
+    services they engaged with. This number will range from a minimum of
+    0 if they didn’t use any services, to a maximum of 3 if a client
+    used the pantry, volunteer services and care mgmt services in that
+    month.
+-   calculate a 2 month rolling mean of services each client engaged
+    with
+-   check if that rolling mean is greater than or equal to 0.5, and if
+    so define that client as being active in that month
+-   add up all active clients for each month
+
+Both the rolling mean period and threshold can be adjusted to either
+widen or narrow the definition of an active client. To make the
+definition more strict, the threshold could be changed to from 0.5 to 1,
+which would mean the client would need to use least 1 service offered in
+2 of the 2 previous months. To make the definition more relaxed, the
+rolling mean period could be extended to 3 months and the threshold
+could be changed to 0.33, which would mean the client would need to use
+least 1 service offered in 1 of the 3 previous months to be considered
+active.
+
+The table below shows how a single client can fall into or out of Active
+Client status depending on the rolling mean period and threshold used.
+the `lookback_mean_` columns contain 2 and 3 month rolling means of
+services used, respectively. The remaining `acitve_client` columns
+compare the rolling means to various thresholds
+
+| column                            | rolling mean used | threshold value used | interpretation                                                                                                         |
+|-----------------------------------|-------------------|----------------------|------------------------------------------------------------------------------------------------------------------------|
+| active_client_2\_mo               | lookback_mean_2m0 | 1                    | if rolling mean \> threshold, used at least 1 svc offered (pantry, volunteer, care mgmt) in 2 of the 2 previous months |
+| active_client_3\_mo               | lookback_mean_3mo | 1                    | if rolling mean \> threshold, used at least 1 svc offered (pantry, volunteer, care mgmt) in 3 of the 3 previous months |
+| active_client_2\_mo_relaxed       | lookback_mean_2mo | 0.5                  | if rolling mean \> threshold, used at least 1 svc offered (pantry, volunteer, care mgmt) in 1 of the 2 previous months |
+| active_client_3\_mo_relaxed       | lookback_mean_3mo | 0.67                 | if rolling mean \> threshold, used at least 1 svc offered (pantry, volunteer, care mgmt) in 2 of the 3 previous months |
+| active_client_3\_mo_extra_relaxed | lookback_mean_3mo | 0.33                 | if rolling mean \> threshold, used at least 1 svc offered (pantry, volunteer, care mgmt) in 1 of the 3 previous months |
+
+![Active Client
+Example](https://github.com/brndngrhm/2022_datathon/raw/main/analyses/team1/brendan_g/active_client_table.png)
