@@ -1,9 +1,12 @@
 ---
-title: "Eldernet Interactive Dashboard"
+title: "ElderNet Interactive Dashboard"
 subtitle: "2022 Datathon for ElderNet"
 author: "Team 2"
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
-output: pdf_document
+output: 
+  pdf_document:
+    toc: true
+    toc_depth: 3
 urlcolor: blue
 ---
 
@@ -15,7 +18,7 @@ knitr::opts_chunk$set(echo = TRUE,
 
 ## Executive Summary
 
-As a non-profit organization providing vital services and assistance to the elderly, Eldernet needs to make strategic decisions often spanning multiple layers of operation. We sought to create a series of interactive dashboards that would help inform Eldernet’s decision-making pipeline and serve as a storytelling tool. Our dashboards were built in Power BI and Tableau, both platforms chosen to ensure Eldernet could recreate and maintain these visualizations with relative ease and minimal effort, whether it is in a public-facing website or as part of their internal documentation.
+As a non-profit organization providing vital services and assistance to the elderly, ElderNet needs to make strategic decisions often spanning multiple layers of operation. We sought to create a series of interactive dashboards that would help inform Eldernet’s decision-making pipeline and serve as a storytelling tool. Our dashboards were built in Power BI and Tableau, both platforms chosen to ensure Eldernet could recreate and maintain these visualizations with relative ease and minimal effort, whether it is in a public-facing website or as part of their internal documentation.
 
 ## Contributors
 
@@ -44,7 +47,7 @@ We created three dashboards to provide a comprehensive overview of the data for 
 
 ### Dashboard 1. Financials
 
-We sought to provide a dashboard that would allow ElderNet to both visualize their overall financial status across four facets of the donations data, as well as flexibly draw comparisons that might help maximize funding and campaign efforts.The dataset used in this analysis was _donations_anonymized.csv_. 
+We sought to provide a dashboard (interactive link [here](https://public.tableau.com/app/profile/michelle.chiu/viz/Charity_Dashboard_16486536967300/Dashboard1?publish=yes)) that would allow ElderNet to both visualize their overall financial status across four facets of the donations data, as well as flexibly draw comparisons that might help maximize funding and campaign efforts.The dataset used in this analysis was _donations_anonymized.csv_. 
 
 ```{r, echo = FALSE, message=FALSE, fig.cap='ElderNet donations across all campaign types between January 2019 and September 2021.'}
 knitr::include_graphics("../dashboard1_financials.png")
@@ -67,7 +70,7 @@ The image above shows donations specifically from **Fall Township** and **Spring
 
 ### Dashboard 2. Care Management
 
-The Care Management dashboard displays how clients have been interacting with ElderNet, as well as the types of assistance and benefits that they request from ElderNet.
+The Care Management dashboard (linked [here](https://public.tableau.com/app/profile/sean.cancino/viz/Charity_Demographics_Care_Management/Dashboard1?publish=yes)) displays how clients have been interacting with ElderNet, as well as the types of assistance and benefits that they request from ElderNet.
 
 ```{r, echo = FALSE, message=FALSE, fig.cap='Client interactions with ElderNet between 2019 and 2021.'}
 knitr::include_graphics("../dashboard2_care_management.png")
@@ -95,7 +98,7 @@ The dashboard above contains data for volunteer services, particularly rider ser
 
 ![Food Pantry Interactions](../dashboard3-2_pantry.png)
 
-The dashboard above contains data for Pantry utilization collected from January 2019 to September 2021. 
+The dashboard above (linked [here](https://public.tableau.com/app/profile/sean.cancino/viz/ClientEngagementDashboards/Dashboard2?publish=yes)) contains data for Pantry utilization collected from January 2019 to September 2021. 
 
 - Panel A highlights assistance category with highest number of pantry requests.
 - Panel B provides an overview of how much food, boxes/bags and dollars changed from 2019 to 2021.
