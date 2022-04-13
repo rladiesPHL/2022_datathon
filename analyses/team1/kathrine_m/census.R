@@ -141,7 +141,8 @@ montgomery_poverty_pie <- mont_pov %>%
   labs(title = "Montgomery County Residents",
        subtitle = "Data source: US Census Bureau, 2016-2020 5-year ACS",
        fill = NULL,
-       x = NULL) +
+       x = NULL,
+       y = NULL) +
   coord_polar(theta = "y") +
   guides(color = "none") +
   theme_classic() +
