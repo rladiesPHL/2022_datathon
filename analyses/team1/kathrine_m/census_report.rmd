@@ -1,0 +1,62 @@
+---
+title: Using the `tidycensus` R Package to Analyze the Population Demographics of
+  Montgomery County, PA
+author: "Kathrine McAulay"
+date: "3/27/2022"
+output: github_document
+---
+
+```{r setup}
+library(tidycensus)
+library(forcats)
+# To recreate these anlyses you will need your own API key
+# https://api.census.gov/data/key_signup.html
+# census_api_key("YOUR KEY GOES HERE", install = TRUE)
+```
+
+### Resources
+The code in this document is based on examples found here:
+
+* https://walker-data.com/census-r/index.html
+* 
+
+## Montgomery County, PA
+
+ElderNet serves the Lower Merion and Narberth Townships of Montgomery County, PA. We can use the `tidycensus` package to look at the population demographics of this region based on the US Census Bureau data.
+
+One way census reported variable we can look at is "Median household income in the past 12 months (in 2020 inflation-adjusted dollars)", represented by variable "B19013_001".
+
+Setting `geography` to "county subdivision" we can see subtotals for each Township whin the County, including Lower Merion and Narberth.
+
+```{r}
+montgomery_acs_2020 <- get_acs(
+  geography = "county subdivision",
+  state = "PA",
+  county = "Montgomery",
+  variables = "B19013_001",
+  geometry = TRUE,
+  year = 2020
+  )
+```
+
+We can then use `geom_sf` to compare median household income across each Township in the County:
+
+```{r}
+montgomery_income_map <- ggplot(montgomery_acs_2020,
+                                aes(fill = estimate, color = estimate)) +
+  geom_sf() +
+  scale_fill_viridis(direction = -1, option = "I") + 
+  scale_color_viridis(direction = -1, option = "I") +
+  labs(title = "Median Income Across Montgomery County, PA",
+       subtitle = "Data source: US Census Bureau, 2016-2020 ACS",
+       fill = "Estimated Median\nIncome (USD)") +
+  guides(color = "none") +
+  theme_void() +
+  theme(plot.title = element_text(size = 17),
+        plot.subtitle = element_text(size = 13))
+```
+
+! [Median Income Montgomery County] (analyses/team1/kathrine_m/images/montgomery_income_map.png)
+
+
+### Ra

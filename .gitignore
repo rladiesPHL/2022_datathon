@@ -2,3 +2,5 @@
 .Rhistory
 .RData
 .Ruserdata
+*.html
+analyses/team1/brendan_g/presentation_notes
