@@ -77,10 +77,12 @@ montgomery_income_map <- ggplot(montgomery_acs_2020,
        subtitle = "Data source: US Census Bureau, 2016-2020 ACS",
        fill = "Estimated Median\nIncome (USD)") +
   guides(color = "none") +
-  theme_void() +
+  theme_classic() +
   theme(plot.title = element_text(size = 17),
         plot.subtitle = element_text(size = 13),
-        plot.background = element_rect(colour = "#FFFFFF"))
+        axis.line = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank())
 
 ggsave("analyses/team1/kathrine_m/images/montgomery_income_map.png",
        montgomery_income_map,
@@ -138,19 +140,21 @@ montgomery_poverty_pie <- mont_pov %>%
   scale_color_manual(values = c("#410A45", "#c6b5c7")) +
   labs(title = "Montgomery County Residents",
        subtitle = "Data source: US Census Bureau, 2016-2020 5-year ACS",
-       fill = NULL) +
+       fill = NULL,
+       x = NULL) +
   coord_polar(theta = "y") +
   guides(color = "none") +
-  theme_void() +
+  theme_classic() +
   theme(legend.text = element_text(size = 10),
         plot.title = element_text(size = 14),
         plot.subtitle = element_text(size = 10),
-        plot.background = element_rect(colour = "#FFFFFF"))
+        axis.line = element_blank(),
+        axis.text = element_blank())
 
-# ggsave("analyses/team1/kathrine_m/images/montgomery_poverty_status.png",
-#        montgomery_poverty_pie,
-#        device = "png", width = 7, height = 4,
-#        units = "in")
+ggsave("analyses/team1/kathrine_m/images/montgomery_poverty_status.png",
+       montgomery_poverty_pie,
+       device = "png", width = 5, height = 4,
+       units = "in")
 
 
 ##### Minority Status #####
