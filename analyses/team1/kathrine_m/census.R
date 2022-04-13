@@ -2,6 +2,7 @@ library(tidycensus)
 library(tidyverse)
 library(forcats)
 library(viridis)
+library(scales)
 
 # Resources for`tidycensus`:
 ## Documentation: https://walker-data.com/tidycensus/
@@ -11,7 +12,7 @@ library(viridis)
 # https://api.census.gov/data/key_signup.html
 
 # Then install it using this code:
-# census_api_key("YOUR KEY GOES HERE", install = TRUE)
+# census_api_key("your key goes here", install = TRUE)
 
 # There are a lot of variables in the census datasets
 # So it is helpful to create a list of them to search:
@@ -69,7 +70,8 @@ montgomery_acs_2020 <- get_acs(
 montgomery_income_map <- ggplot(montgomery_acs_2020,
                                 aes(fill = estimate, color = estimate)) +
   geom_sf() +
-  scale_fill_viridis(direction = -1, option = "I") + 
+  scale_fill_viridis(direction = -1, option = "I",
+                     labels = dollar_format()) + 
   scale_color_viridis(direction = -1, option = "I") +
   labs(title = "Median Income Across Montgomery County, PA",
        subtitle = "Data source: US Census Bureau, 2016-2020 ACS",
@@ -77,11 +79,12 @@ montgomery_income_map <- ggplot(montgomery_acs_2020,
   guides(color = "none") +
   theme_void() +
   theme(plot.title = element_text(size = 17),
-        plot.subtitle = element_text(size = 13))
+        plot.subtitle = element_text(size = 13),
+        plot.background = element_rect(colour = "#FFFFFF"))
 
-# ggsave("analyses/team1/kathrine_m/images/montgomery_income_map.png",
-#        montgomery_income_map,
-#        device = "png", height = 4, width = 6, units = "in")
+ggsave("analyses/team1/kathrine_m/images/montgomery_income_map.png",
+       montgomery_income_map,
+       device = "png", height = 4, width = 6, units = "in")
 
 montgomery_acs_2020 %>% 
   filter(str_detect(NAME, "Lower Merion|Narberth")) %>% 
@@ -96,7 +99,7 @@ montgomery_acs_2020 %>%
 ##### Poverty Status #####
 
 mont_pov <- get_acs(
-  geography = "county subdivision",
+  geography = "county",
   state = "PA",
   county = "Montgomery",
   variables = c("below" = "B17020_002",
@@ -113,7 +116,14 @@ mont_pov %>%
 # 1 at_above           58198 
 # 2 below               2558 
 
+
+summary_pov <- mont_pov %>% 
+  group_by(variable) %>% 
+  summarise(total = sum(estimate),
+            variable = variable)
+
 montgomery_poverty_pie <- mont_pov %>% 
+  # group_by(variable) %>% 
   summarise(pct = round(estimate/sum(estimate)*100,0),
             variable = variable) %>%  
   ggplot(aes(x = "", y = pct, fill = fct_relevel(variable, "below", "at_above"))) +
@@ -134,7 +144,8 @@ montgomery_poverty_pie <- mont_pov %>%
   theme_void() +
   theme(legend.text = element_text(size = 10),
         plot.title = element_text(size = 14),
-        plot.subtitle = element_text(size = 10))
+        plot.subtitle = element_text(size = 10),
+        plot.background = element_rect(colour = "#FFFFFF"))
 
 # ggsave("analyses/team1/kathrine_m/images/montgomery_poverty_status.png",
 #        montgomery_poverty_pie,
@@ -262,7 +273,7 @@ poverty_pie_stylized <- mont_pov %>%
        fill = NULL) +
   coord_polar(theta = "y") +
   guides(color = "none") +
-  theme_void() +
+  theme_bw() +
   theme(legend.text = element_text(size = 16),
         legend.position = c(1.2, 0.2),
         plot.title = element_text(size = 16),

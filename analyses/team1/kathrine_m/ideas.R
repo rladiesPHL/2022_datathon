@@ -87,7 +87,8 @@ montgomery_poverty_pie <- mont_pov %>%
   theme_void() +
   theme(legend.text = element_text(size = 10),
         plot.title = element_text(size = 14),
-        plot.subtitle = element_text(size = 10))
+        plot.subtitle = element_text(size = 10),
+        plot.background = element_rect(colour = ""))
 
 # ggsave("analyses/team1/kathrine_m/images/montgomery_poverty_status.png",
 #        montgomery_poverty_pie,
