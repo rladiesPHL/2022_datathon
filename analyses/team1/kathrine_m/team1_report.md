@@ -12,11 +12,11 @@ Merion and Narberth Townships in Pennsylvania by connecting them with
 public services to help them remain independent and in their own homes
 for longer. This data review confirmed the need for such services by
 highlighting an potentially overlooked population in poverty in an
-otherwise high-income area and documenting the continued use of services
-to meet basic human needs such as a food pantry and access to medical
-care. These data demonstrate that ElderNet is doing well to reach a
-community in need and suggest the utilization of a metric to track
-client activity and connecting this with client outcomes to better
+otherwise high-income area, and documenting the continued use of
+services to meet basic human needs such as a food pantry and access to
+medical care. Our analysis demonstrates that ElderNet is doing well to
+reach a community in need and suggests the utilization of a metric to
+track client activity and connecting this with client outcomes to better
 determine the efficacy of offered services in keeping clients in their
 homes. Such a metric may also help to ensure service accessibility
 remains unobstructed in times of disruption and uncertainty such as
@@ -65,7 +65,7 @@ datasets.
 -   Pantry: A summary of the food provided to each client via the Pantry
     service
 -   Volunteer Services: A summary of the rides provided to each client
-    and the pusrpose of each ride
+    and the purpose of each ride
 
 Some basic data cleaning was required for the Care Management dataset to
 correct for typos etc. A cleaned version of this dataset can be found
@@ -105,12 +105,12 @@ The concept of tracking client activity over time was also explored and
 an *Active Client* was defined as a client who had used at least one
 service (volunteer services, pantry, or care management) in at least one
 of the previous two months. This is a lagging indicator and the impact
-of the COVID-19 pandemic can be seen in 2020 and a hopeful uptick in
-service usage following vaccination roll out in early 2021 (Figure 1). A
-limitation of this metric is that it does not take into account the
-intensity of service utilization; however, the inclusion criteria can be
-modified to narrow or widen the window as desired. See the Appendix for
-more details about how this metric was created.
+of the COVID-19 pandemic can be seen in 2020, followed by a hopeful
+uptick in service usage following vaccination roll out in early 2021
+(Figure 1). A limitation of this metric is that it does not take into
+account the intensity of service utilization; however, the inclusion
+criteria can be modified to narrow or widen the window as desired. See
+the Appendix for more details about how this metric was created.
 
 ![Figure 1. Client
 activity](https://github.com/brndngrhm/2022_datathon/blob/main/analyses/team1/brendan_g/charts_for_presentation_files/figure-gfm/unnamed-chunk-6-1.png?raw=true)
@@ -119,7 +119,7 @@ activity](https://github.com/brndngrhm/2022_datathon/blob/main/analyses/team1/br
 
 #### How well is ElderNet connecting participants to the public benefits that they need?
 
-**Health/Medical:** Between April 2015 and December 2021, Eldernet
+**Health/Medical:** Between April 2015 and December 2021, ElderNet
 volunteers provided services to clients 4,100 times, and the largest
 share of these (2,102, 51%) were transportation to doctors appointments
 (Figure 2).
@@ -155,15 +155,14 @@ August 2021
 With Team 3 taking a deep dive into geography in the context of service
 expansion, Team 1 opted to limit analysis to Montgomery County, PA.
 ElderNet currently serves two Townships within the County: Lower Merion
-and Narberth. Only 6% of the \[NUMBER\] Montgomery County residents
-under the federal poverty level and The estimated median household
-income in Lower Merion is $140,000; this is the highest in the County
-(2016-2020 American Community Survey, US Census Bureau; Figure 4).
-Nonetheless, 490 people in this region required assistance associated
-with basic human needs such as food and accessing healthcare in the last
-two years. It is clear that if such a need exists in these Townships
-there is likely a similar or more pronounced need in neighboring
-Townships.
+and Narberth. Only 6% of the 805,000 Montgomery County residents fall
+below the federal poverty level and the median income in Lower Merion is
+$140,000; this is the highest in the County (2016-2020 American
+Community Survey, US Census Bureau (Figure 4). Nonetheless, 490 people
+in this region required assistance associated with basic human needs
+such as food and accessing healthcare in the last two years. It is clear
+that if such a need exists in these Townships there is likely a similar
+or more pronounced need in neighboring Townships.
 
 |                                                                   A                                                                    |                                                                     B                                                                      |
 |:--------------------------------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------------------------------:|
