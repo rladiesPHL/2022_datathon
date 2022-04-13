@@ -1,13 +1,26 @@
 2022 Datathon (R Ladies Philly / Data Philly)
 ================
 Team 1
-4/6/2022
+4/13/2022
 
 ## ElderNet’s Impact in the Community
 
 ### Executive Summary
 
-\[WILL ADD WHEN HAPPY WITH CONTENT\]
+ElderNet provides a lifeline to elderly and disabled residents of Lower
+Merion and Narberth Townships in Pennsylvania by connecting them with
+public services to help them remain independent and in their own homes
+for longer. This data review confirmed the need for such services by
+highlighting an potentially overlooked population in poverty in an
+otherwise high-income area and documenting the continued use of services
+to meet basic human needs such as a food pantry and access to medical
+care. These data demonstrate that ElderNet is doing well to reach a
+community in need and suggest the utilization of a metric to track
+client activity and connecting this with client outcomes to better
+determine the efficacy of offered services in keeping clients in their
+homes. Such a metric may also help to ensure service accessibility
+remains unobstructed in times of disruption and uncertainty such as
+during the COVID-19 pandemic.
 
 ### Contributors
 
@@ -56,7 +69,7 @@ datasets.
 
 Some basic data cleaning was required for the Care Management dataset to
 correct for typos etc. A cleaned version of this dataset can be found
-[here](https://github.com/brndngrhm/2022_datathon/blob/main/analyses/team1/kathrine_m/care_management_anonymized_cleaned.v1.csv).
+[here](https://github.com/brndngrhm/2022_datathon/blob/main/analyses/team1/kathrine_m/cleaned_data_files).
 
 There were a large number of missing values in the assistance and
 benefit categories within the Care Management dataset. Further, these
@@ -64,9 +77,7 @@ variables were split into three assistance and three benefit categories,
 to allow capture of multiple assistance events on a single date. To
 consolidate this information and minimize NA values, these variables
 were merged. The merged version of this dataset can be found
-[here](https://github.com/brndngrhm/2022_datathon/blob/main/analyses/team1/kathrine_m/care_management_clean_merge.csv).
-
-\[TO ADD NOTES ON ANY DATA OMITTED/CAVEATS\]
+[here](https://github.com/brndngrhm/2022_datathon/blob/main/analyses/team1/kathrine_m/cleaned_data_files).
 
 ### Results
 
@@ -77,13 +88,18 @@ ElderNet services were associated with successfully allowing clients to
 remain in their homes. Instead, service usage was reviewed in aggregate
 to highlight those that were most heavily used.
 
-Between \[DATE\] and \[DATE\] there were:
+Between February 2019 and August 2021 there were:
 
 -   21,504 instances of direct care
 -   766 home visits, lasting more than 485 hours
 -   Over 638 hours of phone calls
 -   145,300 lbs of food issued from the Pantry
 -   2,102 rides to doctor’s appointments
+
+The services offered by ElderNet were returned to time and again by
+clients, proving not only their utility, but their availability. 119
+clients took advantage of services 50 or more times, and 66 used them
+100 or more times.
 
 The concept of tracking client activity over time was also explored and
 an *Active Client* was defined as a client who had used at least one
@@ -99,40 +115,48 @@ more details about how this metric was created.
 ![Figure 1. Client
 activity](https://github.com/brndngrhm/2022_datathon/blob/main/analyses/team1/brendan_g/charts_for_presentation_files/figure-gfm/unnamed-chunk-6-1.png?raw=true)
 
-**Figure 1.** \[LEGEND GOES HERE\]
+**Figure 1.** ElderNet client activity over a two year period
 
 #### How well is ElderNet connecting participants to the public benefits that they need?
 
 **Health/Medical:** Between April 2015 and December 2021, Eldernet
 volunteers provided services to clients 4,100 times, and the largest
 share of these (2,102, 51%) were transportation to doctors appointments
-(Figure 2). 
+(Figure 2).
 
 ![Figure 2. Volunteer Services by
-Category](https://github.com/brndngrhm/2022_datathon/blob/main/analyses/team1/kathrine_m/images/volunteer_services_plot.png?raw=true)
+Category](https://github.com/brndngrhm/2022_datathon/blob/main/analyses/team1/kathrine_m/images/volunteer_services_plot2.png?raw=true)
 
 **Figure 2.** Needs met via ElderNet volunteer services, including
 transportation and home visits
 
 **Food Assistance:** The second largest share of volunteer services went
-to shopping, impacting 76 clients a total of 1158 times.
-Further, the Pantry service has issued 145,000 lbs of food to clients
-since 2019, with peaks seen around the winter holidays, when ElderNet
-issues holiday baskets and also in the early months of the COVID-19
-pandemic in 2020 (Figure 3, green line). It is not surprising that the pandemic impacted ElderNet services, with both Care Management and Volunteer Services seeing a decline in early 2020 (Figure 3). This can be explained in part by the lack of availability of public services such as doctors appointments. However, the apparent increase of Pantry usage during this time highlights the value of this service in the community in times of need.
+to shopping, impacting 76 clients a total of 1158 times. Further, the
+Pantry service has issued 145,000 lbs of food to clients since 2019,
+with peaks seen around the winter holidays, when ElderNet issues holiday
+baskets and also in the early months of the COVID-19 pandemic in 2020
+(Figure 3, green line). It is not surprising that the pandemic impacted
+ElderNet services, with both Care Management and Volunteer Services
+seeing a decline in early 2020 (Figure 3). This can be explained in part
+by the lack of availability of public services such as doctors
+appointments. However, the apparent increase of Pantry usage during this
+time highlights the value of this service in the community in times of
+need.
 
+![Figure 3. Service
+Utilization](https://github.com/brndngrhm/2022_datathon/blob/main/analyses/team1/brendan_g/charts_for_presentation_files/figure-gfm/unnamed-chunk-4-1.png?raw=TRUE)
 
-[Figure 3. Monthly service utilization](https://github.com/brndngrhm/2022_datathon/blob/main/analyses/team1/brendan_g/charts_for_presentation_files/figure-gfm/unnamed-chunk-4-1.png?raw=TRUE)
-
-**Figure 3.** Monthly utilization ElderNet Care Management (black), Pantry (green), and Volunteer Services (purple)
+**Figure 3.** Utilization of ElderNet Care Management (black), Pantry
+(green), and Volunteer (purple) services between February 2019 and
+August 2021
 
 #### How do the counties served by ElderNet compare to similar counties where services like ElderNet are not available?
 
 With Team 3 taking a deep dive into geography in the context of service
 expansion, Team 1 opted to limit analysis to Montgomery County, PA.
 ElderNet currently serves two Townships within the County: Lower Merion
-and Narberth. Only 6% of the 805,000 Montgomery County residents fall
-below the federal poverty level and The estimated median household
+and Narberth. Only 6% of the \[NUMBER\] Montgomery County residents
+under the federal poverty level and The estimated median household
 income in Lower Merion is $140,000; this is the highest in the County
 (2016-2020 American Community Survey, US Census Bureau; Figure 4).
 Nonetheless, 490 people in this region required assistance associated
@@ -141,9 +165,9 @@ two years. It is clear that if such a need exists in these Townships
 there is likely a similar or more pronounced need in neighboring
 Townships.
 
-A             |  B
-:-------------------------:|:-------------------------:
-![Figure 4A](https://github.com/brndngrhm/2022_datathon/blob/main/analyses/team1/kathrine_m/images/montgomery_income_map.png?raw=TRUE)  |  ![Figure 4B](https://github.com/brndngrhm/2022_datathon/blob/main/analyses/team1/kathrine_m/images/montgomery_poverty_status.png?raw=TRUE)
+|                                                                   A                                                                    |                                                                     B                                                                      |
+|:--------------------------------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------------------------------:|
+| ![Figure 4A](https://github.com/brndngrhm/2022_datathon/blob/main/analyses/team1/kathrine_m/images/montgomery_income_map.png?raw=TRUE) | ![Figure 4B](https://github.com/brndngrhm/2022_datathon/blob/main/analyses/team1/kathrine_m/images/montgomery_poverty_status.png?raw=TRUE) |
 
 **Figure 4.** Proportion of residents below the federal poverty level in
 Montgomery County, PA (A) and the estimated median household income
@@ -175,12 +199,13 @@ red box.
 
 ### References
 
-* 2016-2020 5 year American Community Survey, US Census Bureau
+2016-2020 5 year American Community Survey, US Census Bureau
 
-Census data was obtained and analyzed using the `tidycensus` R package, using resources from Kyle Walker: https://walker-data.com/tidycensus/
+Census data was obtained and analyzed using the `tidycensus` R package,
+using resources from Kyle Walker: <https://walker-data.com/tidycensus/>
 
-This data can also be accessed in a user-friendly API at https://data.census.gov/cedsci/
-
+This data can also be accessed in a user-friendly API at
+<https://data.census.gov/cedsci/>
 
 ### Appendix
 
