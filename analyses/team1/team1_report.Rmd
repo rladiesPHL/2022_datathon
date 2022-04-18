@@ -2,11 +2,14 @@
 title: "2022 Datathon (R Ladies Philly / Data Philly)"
 author: "Team 1"
 date: "4/13/2022"
-output: github_document
+output: pdf_document
+
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(kableExtra)
 ```
 
 ## ElderNet's Impact in the Community
@@ -62,10 +65,11 @@ Between February 2019 and August 2021 there were:
 * 2,102 rides to doctor's appointments
 
 The services offered by ElderNet were returned to time and again by clients, proving not only their utility, but their availability. 119 clients took advantage of services 50 or more times, and 66 used them 100 or more times.
+\
 
 The concept of tracking client activity over time was also explored and an *Active Client* was defined as a client who had used at least one service (volunteer services, pantry, or care management) in at least one of the previous two months. This is a lagging indicator and the impact of the COVID-19 pandemic can be seen in 2020, followed by a hopeful uptick in service usage following vaccination roll out in early 2021 (Figure 1). A limitation of this metric is that it does not take into account the intensity of service utilization; however, the inclusion criteria can be modified to narrow or widen the window as desired. See the Appendix for more details about how this metric was created.
 
-![Figure 1. Client activity](https://github.com/brndngrhm/2022_datathon/blob/main/analyses/team1/brendan_g/charts_for_presentation_files/figure-gfm/unnamed-chunk-6-1.png?raw=true)
+![](brendan_g/charts_for_presentation_files/figure-gfm/unnamed-chunk-6-1.png){width=350px}
 
 **Figure 1.** ElderNet client activity over a two year period
 
@@ -74,23 +78,27 @@ The concept of tracking client activity over time was also explored and an *Acti
 **Health/Medical:** Between April 2015 and December 2021, ElderNet volunteers provided services to clients 4,100 times, and the largest
 share of these (2,102, 51%) were transportation to doctors appointments (Figure 2). 
 
-![Figure 2. Volunteer Services by Category](https://github.com/brndngrhm/2022_datathon/blob/main/analyses/team1/kathrine_m/images/volunteer_services_plot2.png?raw=true)
+![](kathrine_m/images/volunteer_services_plot2.png){width=400px}
 
 **Figure 2.** Needs met via ElderNet volunteer services, including transportation and home visits
+\
 
 **Food Assistance:** The second largest share of volunteer services went to shopping, impacting 76 clients a total of 1158 times. Further, the Pantry service has issued 145,000 lbs of food to clients since 2019, with peaks seen around the winter holidays, when ElderNet issues holiday baskets and also in the early months of the COVID-19 pandemic in 2020 (Figure 3, green line). It is not surprising that the pandemic impacted ElderNet services, with both Care Management and Volunteer Services seeing a decline in early 2020 (Figure 3). This can be explained in part by the lack of availability of public services such as doctors appointments. However, the apparent increase of Pantry usage during this time highlights the value of this service in the community in times of need.
+\
 
-![Figure 3. Service Utilization](https://github.com/brndngrhm/2022_datathon/blob/main/analyses/team1/brendan_g/charts_for_presentation_files/figure-gfm/unnamed-chunk-4-1.png?raw=TRUE)
+![](brendan_g/charts_for_presentation_files/figure-gfm/unnamed-chunk-4-1.png){width=350px}
 
 **Figure 3.** Utilization of ElderNet Care Management (black), Pantry (green), and Volunteer (purple) services between February 2019 and August 2021
+\
 
 #### How do the counties served by ElderNet compare to similar counties where services like ElderNet are not available?
 
 With Team 3 taking a deep dive into geography in the context of service expansion, Team 1 opted to limit analysis to Montgomery County, PA. ElderNet currently serves two Townships within the County: Lower Merion and Narberth. Only 6% of the 805,000 Montgomery County residents fall below the federal poverty level and the median income in Lower Merion is $140,000; this is the highest in the County (2016-2020 American Community Survey, US Census Bureau (Figure 4). Nonetheless, 490 people in this region required assistance associated with basic human needs such as food and accessing healthcare in the last two years. It is clear that if such a need exists in these Townships there is likely a similar or more pronounced need in neighboring Townships.
+\
 
 A             |  B
 :-------------------------:|:-------------------------:
-![Figure 4A](https://github.com/brndngrhm/2022_datathon/blob/main/analyses/team1/kathrine_m/images/montgomery_income_map.png?raw=TRUE)  |  ![Figure 4B](https://github.com/brndngrhm/2022_datathon/blob/main/analyses/team1/kathrine_m/images/montgomery_poverty_status.png?raw=TRUE)
+![](kathrine_m/images/montgomery_income_map.png){width=250px}  |  ![](kathrine_m/images/montgomery_poverty_status.png){width=250px}
 
 **Figure 4.** Proportion of residents below the federal poverty level in Montgomery County, PA (A) and the estimated median household income across the county (B). Lower Merion and Narberth are highlighed in the red box.
 
@@ -133,15 +141,18 @@ Both the rolling mean period and threshold can be adjusted to either widen or na
 
 The table below shows how a single client can fall into or out of Active Client status depending on the rolling mean period and threshold used. the `lookback_mean_` columns contain 2 and 3 month rolling means of services used, respectively. The remaining `acitve_client` columns compare the rolling means to various thresholds
 
-column | rolling mean used | threshold value used | interpretation |
------- | ----------------- | -------------- | -------------- |
-active_client_2_mo | lookback_mean_2m0 | 1 | if rolling mean > threshold, used at least 1 svc offered (pantry, volunteer, care mgmt) in 2 of the 2 previous months | 
-active_client_3_mo | lookback_mean_3mo | 1 | if rolling mean > threshold, used at least 1 svc offered (pantry, volunteer, care mgmt) in 3 of the 3 previous months | 
-active_client_2_mo_relaxed |  lookback_mean_2mo | 0.5 | if rolling mean > threshold, used at least 1 svc offered (pantry, volunteer, care mgmt) in 1 of the 2 previous months | 
-active_client_3_mo_relaxed | lookback_mean_3mo | 0.67 | if rolling mean > threshold, used at least 1 svc offered (pantry, volunteer, care mgmt) in 2 of the 3 previous months | 
-active_client_3_mo_extra_relaxed | lookback_mean_3mo | 0.33 | if rolling mean > threshold, used at least 1 svc offered (pantry, volunteer, care mgmt) in 1 of the 3 previous months | 
+```{r, echo=FALSE, message=FALSE}
+definition_table <- read_csv("kathrine_m/active_client_def_table.csv")
+kbl(definition_table, booktabs = T) %>% 
+  column_spec(1, width = "2.25in") %>% 
+  column_spec(2, width = "1in") %>%
+  column_spec(3, width = "0.75in") %>%
+  column_spec(4, width = "2.5in")
+```
 
-![Active Client Example](https://github.com/brndngrhm/2022_datathon/raw/main/analyses/team1/brendan_g/active_client_table.png)
+\
+\
+An example (client number 641):
 
-
+![](brendan_g/active_client_table.png)
 
