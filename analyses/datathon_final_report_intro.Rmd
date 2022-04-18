@@ -1,0 +1,71 @@
+---
+title: "Aging in Place with ElderNet"
+subtitle: "An datathon organized by R-Ladies Philly & Data Philly"
+date: "2/16/2022 - 4/15/2022"
+output: pdf_document
+urlcolor: blue
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Background
+
+The "Aging in Place" datathon aimed to connect and enable data science enthusiasts in the Philadelphia region to learn and collaborate, while exploring how ElderNet's programs for elderly and disabled individuals can serve the community now and in the future. Data analyses were completed by participants in three groups, each focusing on one of the following main topics: 1) ElderNet's impact in the community, 2) an insights dashboard to support decision-making, and 3) growth opportunities and new ideas. 
+
+## Partners
+
+[ElderNet of Lower Merion and Narberth](https://eldernet.org/) is a nonprofit organization that was founded in 1976 by representatives of community, religious and governmental groups. ElderNet serves adults of all ages, especially frail older or younger disabled persons with low to moderate incomes who reside in Lower Merion or Narberth. ElderNet helps older neighbors remain independent and provides a variety of free, practical services so they have access to healthcare, food security, and an improved quality of life. ElderNet also provides information to individuals who need assistance with housing, nursing care, or other necessities. ElderNet served as the sponsor for this datathon, providing data and invaluable subject matter expertise.
+
+[R-Ladies Philly](https://www.rladiesphilly.org/) is the Philadelphia chapter of [R-Ladies Global](https://rladies.org/), promoting gender diversity in Philadelphia's data science community through informal monthly workshops, happy hours, and real-world data analytics projects. 
+
+[DataPhilly](https://www.meetup.com/DataPhilly/) is a community run group in Philadelphia for anyone interested in gaining insights from data. Topics include (but are not limited to) predictive analytics, applied machine learning, big data, data warehousing and data science. 
+
+## Data 
+
+The data consisted of de-identified information covering ElderNet services between January 2019 and October 2021, including client demographics (e.g. county, poverty status, minority group, and age label), care management interactions (e.g. assistance date, communication type, benefits and assistance discussed per interaction), food pantry visits (e.g. visit date, type of assistance, quantity of food), and information on rides provided by ElderNet volunteers to clients (e.g. date of each ride taken and main reason for ride). Additionally, data on donations received by ElderNet (e.g. donor zip code, amount and campaign) was also included. 
+
+### Data De-Identification Process
+
+Datathon organizers helped de-identify the datasets after signing confidentiality agreements. Unique clients across all ElderNet services were compiled into a comprehensive list and given new, randomly generated client IDs. Each dataset was re-coded to use the newly generated client IDs, and any identifiable data was removed: client race information was transformed to a minority flag (yes/no) and income information was reduced to a poverty flag (yes/no) using criteria not shared with datathon participants (but provided to ElderNet separately). ElderNet client's ages were transformed into age ranges, and random letters were assigned to these age ranges. These letters were the only age information provided to datathon participants (no translation to clients' real age range was provided to participants, but this was provided to ElderNet separately). Finally, clients' location information was reduced to county level (Montgomery or Other). 
+
+### Preprocessing of Care Management data
+
+The care management dataset was provided to datathon organizers as text entries. As part of data preprocessing, a set of categories of benefits and assistance types were defined. For a subset of the data (due to time constraints), each text line was hand coded into one of these categories. The category definitions are listed below: 
+
+Assistance types:
+
+-   **Coordination:** following up/connecting with client/service provider to facilitate something
+-   **Continuation:** helping client maintain their existing benefits
+-   **Enrollment:** helping with the enrollment process
+-   **Filing:** submitting forms (when enrollment/continuation of benefits unclear)
+-   **Information:** providing information, explaining documents
+-   **Referral:** referral to a provider, informing client of specific providers for their problem
+-   **Support:** in person/social visits, doing/bringing/buying things for the participant
+
+Benefit types
+
+-   **ADL:** activities of daily living, Home health Aides
+-   **ElderNet:** processes to do with being an ElderNet participant
+-   **Financial:** pension, SSDI, SS, retirement, debt, taxes, etc
+-   **Food:** ability to access and obtain food
+-   **Housing:** to do with a person's home or living environment, including rent, mortgage, repairs, etc
+-   **Legal:** power of attorney, advance directives, ID & identity theft; voting
+-   **Medical:** physical and mental health care, health insurance (& waiver programs), rehab
+-   **Pets:** pet care, pet food
+-   **Safety:** emergency preparedness, firearm removal, hoarding, etc
+-   **Social:** social visit, questions about social activity, etc
+-   **Telecommunication:** access and use of phone service, internet, TV; things to do with technology
+-   **Transportation:** access to public transit, medical and nonmedical transportation, etc
+-   **Utilities:** electric, gas, water
+
+### Overall recommendations for data collection
+
+For more efficient data processing options in the future, particularly with regard to Care Management data, we would recommend the following:
+
+- Record interactions so that a record reflects only one interaction. For example, if an ElderNet employee speaks with a colleague and then follows up with the client based on that conversation, make sure those are two records; we saw instances these details were encompassed into the same note.
+- Label interactions based on future analytics needs, so that all interactions can be categorized at the time of recording. The categories listed above were inferred from care manager notes, but these should be refined to more accurately capture the work. It is important to note here that too many categories can make recording more time-consuming, so this should be considered when defining a list of labels. 
+- To reduce the complexity of summarizing data, labels should be used consistently, and their wording or definitions should not change.
+
+
